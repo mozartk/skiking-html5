@@ -1,5 +1,5 @@
-define(["jquery", "underscore"],
-  function($, _){
+define([],
+  function(){
     'use strict';
 
     var imgData;
@@ -16,16 +16,22 @@ define(["jquery", "underscore"],
 
     /* 비동기로 게임 데이터 가져옴
     * 현재는 게임 파일 용량이 크기 때문에 Imgur에 게임 파일 올려두고 거기서 읽어옴    * */
-    dataParse.prototype.loadData = function(){
+    dataParse.prototype.loadData = function(callback){
         var oReq = new XMLHttpRequest();
         var that = this;
         oReq.open("GET", this.dataFileUrl, true);
         oReq.responseType = "arraybuffer";
 
+        //oReq.addEventListener("progress", function(a,b,c){
+        //  console.log(a)
+        //},false);
+
         oReq.onload = function (oEvent) {
           var arrayBuffer = oReq.response; // Note: not oReq.responseText
           imgData = new Uint8Array(arrayBuffer);
           that.fetching();
+
+          callback();
         };
 
         oReq.send(null);
@@ -76,7 +82,7 @@ define(["jquery", "underscore"],
       } else {
         return false;
       }
-    }
+    };
 
     return new dataParse;
-})
+});
