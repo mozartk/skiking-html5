@@ -17,8 +17,7 @@ define(["rawPCM"],
       var idx = 0;
       for(var arrIdx in this.cutPoint){
         var array = this.cutPoint[arrIdx];
-        this.soundObj[array[0]] = rawpcm.getWav(this.sound, idx, (array[1]-idx));
-        idx = array[1];
+        this.soundObj[array[0]] = rawpcm.getWav(this.sound, idx, array[1]);
       }
     };
 
