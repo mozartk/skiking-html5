@@ -1,11 +1,12 @@
-define([],
-  function(){
+define(["jquery", "underscore"],
+  function($, _){
     'use strict';
 
     var imgData;
 
     function dataParse(){
-      this.dataFileUrl = "//i.imgur.com/LawI0lC.png";
+      //this.dataFileUrl = "//i.imgur.com/LawI0lC.png";
+      this.dataFileUrl = "skiking.dat.png";
       this.config = {
         //이미지 바이너리 뒤에 게임데이터를 붙였기 때문에 이미지만큼의 데이터는 제외시켜야 함.
         imgDataLen : 136
@@ -18,19 +19,17 @@ define([],
     * 현재는 게임 파일 용량이 크기 때문에 Imgur에 게임 파일 올려두고 거기서 읽어옴    * */
     dataParse.prototype.loadData = function(callback){
         var oReq = new XMLHttpRequest();
+        oReq.addEventListener("progress", function(e){
+          console.log(e.loaded);
+        });
         var that = this;
         oReq.open("GET", this.dataFileUrl, true);
         oReq.responseType = "arraybuffer";
-
-        //oReq.addEventListener("progress", function(a,b,c){
-        //  console.log(a)
-        //},false);
 
         oReq.onload = function (oEvent) {
           var arrayBuffer = oReq.response; // Note: not oReq.responseText
           imgData = new Uint8Array(arrayBuffer);
           that.fetching();
-
           callback();
         };
 
@@ -73,7 +72,7 @@ define([],
         this.gameData[fileName] = skiData.subarray(addrS[0], addrE[0]);
       }
     };
-    
+
     dataParse.prototype.get = function(fileName){
       var fileName = fileName.toUpperCase();
 
@@ -82,7 +81,7 @@ define([],
       } else {
         return false;
       }
-    };
+    }
 
     return new dataParse;
-});
+})
