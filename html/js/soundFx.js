@@ -9,9 +9,24 @@ define(["rawPCM"],
       this.sound = sound;
       this.soundLength = sound.length;
       this.cutPoint = [
-        ["clap", 70000],
-        ["oops", 80000],
-        ["oops2", this.soundLength]
+        ['clap', 61450],
+        ['oops', 64986],
+        ['oh', 68561],
+        ['ooch', 72723],
+        ['wow', 78750],
+        ['lookatmego', 88427],
+        ['imlockinghouse', 101989],
+        ['hitthatbaby', 113068],
+        ['ohyeahlookatmego', 125690],
+        ['titleskiking', 138349],
+        ['whee', 141084],
+        ['whoo', 143361],
+        ['ohhoo', 146393],
+        ['ahoh', 150454],
+        ['50hills', 186300],
+        ['sureis', 201005],
+        ['youwillgo', 214063],
+        ['freeguy', this.soundLength]
       ];
       this.soundObj = {};
 
@@ -65,3 +80,6 @@ define(["rawPCM"],
 
     return soundFx;
   });
+
+
+
