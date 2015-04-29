@@ -4,13 +4,36 @@
   <title>SKI KING v1.0</title>
   <script data-main="js/main" src="js/require.js"></script>
   <script>
-    require(["dataParse"],function(a){
+    require(["dataParse", "soundFx", "jquery"],function(a, soundFx, $){
       window.aa = a;
-      a.loadData();
+      a.loadData(function(dataParse){
+        var sound = new soundFx(a.get("skisound.wad"));
+        window.sfx = sound;
+
+        settingSound(sound, $);
+      });
     });
+
+    function settingSound(sfx, $){
+      $("#titleskiking").click(function(){
+        console.log("titleskiking");
+        sfx.play("titleskiking");
+      });
+      $("#ohyeah").click(function(){
+        console.log("ohyeahlookatmego");
+        sfx.play("ohyeahlookatmego");
+      });
+      $("#go").click(function(){
+        console.log("youwillgo");
+        sfx.play("youwillgo");
+      });
+    }
   </script>
 </head>
 <body>
 <h1>SKI KING</h1>
+<button id="titleskiking">skiking</button> <br>
+<button id="ohyeah">oh yeah!</button> <br>
+<button id="go">go!</button>
 </body>
 </html>
