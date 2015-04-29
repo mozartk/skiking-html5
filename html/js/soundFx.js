@@ -2,8 +2,10 @@ define(["rawPCM"],
   function(rawPCM){
     'use strict';
 
+    var dSelf; //global
+
     function soundFx(sound){
-      var self = this;
+      var self = dSelf = this;
       this.context = new AudioContext();
       this.soundLoadComplete = false;
       this.sound = sound;
@@ -31,7 +33,6 @@ define(["rawPCM"],
       this.soundObj = {};
 
       var rawpcm = new rawPCM();
-
       var idx = 0;
 
       this.soundCnt = this.cutPoint.length;
@@ -43,18 +44,26 @@ define(["rawPCM"],
         idx = array[1];
 
         ﻿this.context.decodeAudioData(soundData.buffer, function(buffer){
-          self.decodeCallback(buffer, self);
+          decodeCallback(buffer, self);
         });
       }
     };
 
-    soundFx.prototype.decodeCallback = function(buffer, self){
-      var index = Object.keys(this.soundObj).length;
+    soundFx.prototype.play = function(audioName){
+      var source = this.context.createBufferSource();
+      source.buffer = get(audioName);
+      source.connect(this.context.destination);
+      source.start(0);
+    };
+
+    function decodeCallback(buffer, self){
+      var index = Object.keys(self.soundObj).length;
       var audioName = self.cutPoint[index][0];
       self.soundObj[audioName] = buffer;
 
-      if(index >= self.soundCnt){
-        if(self.loadComplete === "function"){
+      if(index >= self.soundCnt-1){
+        self.soundLoadComplete = true;
+        if(typeof self.loadComplete === "function"){
           self.loadComplete(self.soundLoadCnt);
         }
       }
@@ -62,21 +71,14 @@ define(["rawPCM"],
       return function(){};
     };
 
-    soundFx.prototype.get = function(audioName){
-      if(self.soundLoadComplete) {
-        return this.soundObj[audioName];
+    function get(audioName){
+      if(dSelf.soundLoadComplete) {
+        return dSelf.soundObj[audioName];
       } else {
         console.error("audio not loaded.");
         return false;
       }
-    };
-
-    soundFx.prototype.play = function(audioName){
-      var source = this.context.createBufferSource();
-      source.buffer = this.soundObj[audioName];
-      source.connect(this.context.destination);
-      source.start(0);
-    };
+    }
 
     return soundFx;
   });
