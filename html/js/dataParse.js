@@ -29,7 +29,7 @@ define(["jquery", "underscore"],
         oReq.onload = function (oEvent) {
           var arrayBuffer = oReq.response; // Note: not oReq.responseText
           imgData = new Uint8Array(arrayBuffer);
-          that.fetching();
+          fetching(that);
           callback();
         };
 
@@ -37,7 +37,7 @@ define(["jquery", "underscore"],
     };
 
     //파일에 있는 주소를 알려줌
-    dataParse.prototype.findAddr = function(idx, skiData){
+    function findAddr(idx, skiData){
       var addrBuf = new Uint8Array(4);
       addrBuf.set(skiData.subarray(idx, idx+4));
       addrBuf = addrBuf.buffer;
@@ -46,12 +46,12 @@ define(["jquery", "underscore"],
 
 
     //Object에 게임 데이터를 할당해둠
-    dataParse.prototype.fetching = function(){
-      var skiData = this.gameData['SKIKING.DAT'] = imgData.subarray(this.config.imgDataLen);
+    function fetching(that){
+      var skiData = that.gameData['SKIKING.DAT'] = imgData.subarray(that.config.imgDataLen);
 
       for(var i=20; i<=180; i = i+20){
-        var addrS = this.findAddr(i, skiData);
-        var addrE = this.findAddr(i+20, skiData);
+        var addrS = findAddr(i, skiData);
+        var addrE = findAddr(i+20, skiData);
 
         //GET FILE NAME
         var j = i-16;
@@ -69,7 +69,7 @@ define(["jquery", "underscore"],
         if(fileName === "SKISEL.DAT"){
           addrE[0] = skiData.length;//EOF
         }
-        this.gameData[fileName] = skiData.subarray(addrS[0], addrE[0]);
+        that.gameData[fileName] = skiData.subarray(addrS[0], addrE[0]);
       }
     };
 
@@ -81,7 +81,7 @@ define(["jquery", "underscore"],
       } else {
         return false;
       }
-    }
+    };
 
     return new dataParse;
 })
