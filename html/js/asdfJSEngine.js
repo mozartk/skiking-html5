@@ -22,7 +22,9 @@ define(["jquery", "underscore"],  function($, _){
   }
 
   function _addLayer(layerOption){
-    console.log(layerOption);
+    require(["gameLayers/_basic"], function(basicLayer){
+      storeLayer[currentLayerLevel] = new basicLayer(layerOption);
+    });
   }
 
   function setVisible(visible){
@@ -37,16 +39,45 @@ define(["jquery", "underscore"],  function($, _){
 
   }
 
-  function eventInit(){
-    var gameDivE = document.getElementById('gameDiv').addEventListener;
-    gameDivE("keydown", eventDistribute, false);
-    gameDivE("keyup", eventDistribute, false);
-    gameDivE("click", eventDistribute, false);
-    gameDivE("keypress", eventDistribute, false);
+  function getLayer(){
+    var layerIdx;
+    if(typeof arguments[0] === "number"){
+      layerIdx = arguments[0];
+    } else {
+      layerIdx = currentLayerLevel;
+    }
+
+    return storeLayer[layerIdx];
   }
 
+  function defalutEventList(){
+    return layerOption.keyEvent.join(" ");
+  }
+
+  function eventInit(){
+    $("#gameDiv").on(defalutEventList(), eventDistribute);
+  }
+
+  //이벤트를 윗 레이어에서 아래 레이어로 분배함
+  //true면 분배 중단함
   function eventDistribute(){
-    getCurrentLayer().sendEvent(arguments[e]);
+
+    //배열을 거꾸로 돌려서 체크해야 하는데 for in은 거꾸로 못돌림... 그래서 한번 더 돌려서 체크함;;
+    var idxArr = [];
+    for(var idx in storeLayer){
+      idxArr.push(~~idx);
+    }
+
+    //높은 순서부터 이벤트 체크함
+    var len = idxArr.length;
+    while(len){
+      var result = getLayer(idxArr[len-1]).event(arguments[0]);
+
+      if(result) break; //true이면 이벤트 전파를 종료함
+
+      len--;
+    }
+
   }
 
   return asdfJSEngine;

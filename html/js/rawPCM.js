@@ -92,6 +92,7 @@ define([],
       }
 
       var bArr = new Uint8Array(int.buffer);
+      var n;
       for (let n of bArr) {
         buf.push(n);
       }
