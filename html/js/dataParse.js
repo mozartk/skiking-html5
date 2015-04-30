@@ -17,23 +17,25 @@ define(["jquery", "underscore"],
 
     /* 비동기로 게임 데이터 가져옴
     * 현재는 게임 파일 용량이 크기 때문에 Imgur에 게임 파일 올려두고 거기서 읽어옴    * */
-    dataParse.prototype.loadData = function(callback){
+    dataParse.prototype.loadData = function(){
+      var that = this;
+      return new Promise(function(resolve, reject){
         var oReq = new XMLHttpRequest();
         oReq.addEventListener("progress", function(e){
           console.log(e.loaded);
         });
-        var that = this;
-        oReq.open("GET", this.dataFileUrl, true);
+        oReq.open("GET", that.dataFileUrl, true);
         oReq.responseType = "arraybuffer";
 
         oReq.onload = function (oEvent) {
           var arrayBuffer = oReq.response; // Note: not oReq.responseText
           imgData = new Uint8Array(arrayBuffer);
           fetching(that);
-          callback();
+          resolve(that.get);
         };
 
         oReq.send(null);
+      });
     };
 
     //파일에 있는 주소를 알려줌

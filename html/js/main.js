@@ -11,6 +11,7 @@ require.config({
     // the HTML page.
     jquery: 'jquery',
     underscore: 'underscore',
+    skiking: 'skiking',
     dataParse: 'dataParse'
   }
 });
