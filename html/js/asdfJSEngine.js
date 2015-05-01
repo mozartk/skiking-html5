@@ -5,13 +5,15 @@ define(["jquery", "underscore"],  function($, _){
   var storeLayer = [];
   var gameDiv = $("#gameDiv");
   var gameCanvas = $("#gameCanvas");
+  var dataParse;
 
   var screenSize = {
     w: 640,
     h: 480
   }
 
-  function asdfJSEngine(){
+  function asdfJSEngine(inst_dataParse){
+    dataParse = inst_dataParse;
     screenInit();
 
     event.init();
@@ -119,12 +121,7 @@ define(["jquery", "underscore"],  function($, _){
   //event Controll part
   var event = {
     init: function(){
-      console.log(event.list());
-      //gameCanvas.on(event.list(), event.distribute);
-
-      _.each(event.list().split(" "), function(v,k,o){
-        gameCanvas[0].addEventListener(v, event.distribute, true);
-      });
+      gameCanvas.on(event.list(), event.distribute);
     },
 
     //각 레이어에 필요한 이벤트 정의함
