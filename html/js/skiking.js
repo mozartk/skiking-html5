@@ -40,7 +40,9 @@ define(["jquery", "underscore", "dataParse"],
     }
 
     function runGame(){
-      console.log('runGame');
+      require(["asdfJSEngine"], function(asdfJSEngine){
+        var engine = window.engine = new asdfJSEngine(dataParse);
+      });
     }
 
     return skiking;

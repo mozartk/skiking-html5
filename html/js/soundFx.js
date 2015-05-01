@@ -43,7 +43,7 @@ define(["rawPCM"],
         var soundData = rawpcm.getWav(this.sound, idx, array[1]);
         idx = array[1];
 
-        ﻿this.context.decodeAudioData(soundData.buffer, function(buffer){
+        this.context.decodeAudioData(soundData.buffer, function(buffer){
           decodeCallback(buffer, self);
         });
       }

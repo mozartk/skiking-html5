@@ -1,5 +1,5 @@
 //v0.0.1
-define(["jquery", "underscore"],  function($, _){
+define(["jquery", "underscore", "bitmap"],  function($, _, Bitmap){
     'use strict';
   var currentLayerLevel = 100;
   var storeLayer = [];
@@ -15,10 +15,14 @@ define(["jquery", "underscore"],  function($, _){
   function asdfJSEngine(inst_dataParse){
     dataParse = inst_dataParse;
     screenInit();
-
     event.init();
+
+
     this.addLayer(100, {title: "titleScreen"});
     this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});
+
+    var a = new Bitmap(dataParse);
+    window.bitmap = a;
   };
   asdfJSEngine.prototype.screenContext = null;
 
