@@ -6,6 +6,11 @@ define(["jquery", "underscore"],  function($, _){
   var gameDiv = $("#gameDiv");
   var gameCanvas = $("#gameCanvas");
 
+  var screenSize = {
+    w: 640,
+    h: 480
+  }
+
   function asdfJSEngine(){
     screenInit();
 
@@ -13,6 +18,7 @@ define(["jquery", "underscore"],  function($, _){
     this.addLayer(100, {title: "titleScreen"});
     this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});
   };
+  asdfJSEngine.prototype.screenContext = null;
 
   asdfJSEngine.prototype.addLayer = function(layerIdx, newLayerOption){
     var layerOption = _.extend(defaultLayerOption(), newLayerOption, {layerLevel: layerIdx});
@@ -46,21 +52,21 @@ define(["jquery", "underscore"],  function($, _){
     }
 
     if(gameCanvas.length === 0){
-      gameDiv.prepend("<canvas id='gameCanvas'></canvas>");
+      gameDiv.prepend("<canvas id='gameCanvas' tabindex='0'></canvas>");
       gameCanvas = $("#gameCanvas");
     }
 
     gameDiv.css({
-      "width": "640px",
-      "height": "480px",
+      "width": screenSize.w + "px",
+      "height": screenSize.h + "px",
       "border": "solid 1px black",
       "padding": "0",
       "margin": "0"
     });
 
     gameCanvas.css({
-      "width": "640px",
-      "height": "480px",
+      "width": screenSize.w + "px",
+      "height": screenSize.h + "px",
       "padding": "0",
       "margin": "0"
     });
@@ -84,7 +90,7 @@ define(["jquery", "underscore"],  function($, _){
   //default layer option
   function defaultLayerOption(newOpt){
     var opt =  {
-      "keyEvent": ["keyup", "keydown", "keypress", "click"],
+      "keyEvent": ["click", "keyup", "keydown", "keypress"],
       "layer": "_basic",
       "enabled": true,
       "visible": true
@@ -98,10 +104,27 @@ define(["jquery", "underscore"],  function($, _){
   }
 
 
+
+  asdfJSEngine.prototype.painter = {
+      engine: undefined,
+      init: function(scope){
+        this.engine = scope
+      },
+      clear: function(){
+        this.engine.screenContext.fillRect(0, 0, screenSize.w, screenSize.h);
+      }
+  };
+
+
   //event Controll part
   var event = {
     init: function(){
-      $("#gameDiv").on(event.list(), event.distribute);
+      console.log(event.list());
+      //gameCanvas.on(event.list(), event.distribute);
+
+      _.each(event.list().split(" "), function(v,k,o){
+        gameCanvas[0].addEventListener(v, event.distribute, true);
+      });
     },
 
     //각 레이어에 필요한 이벤트 정의함
