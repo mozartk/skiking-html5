@@ -3,11 +3,15 @@ define(["jquery", "underscore"],  function($, _){
     'use strict';
   var currentLayerLevel = 100;
   var storeLayer = [];
+  var gameDiv = $("#gameDiv");
+  var gameCanvas = $("#gameCanvas");
 
   function asdfJSEngine(){
+    screenInit();
+
     event.init();
-    this.addLayer(100, {});
-    this.addLayer(101, {visible: false, enabled: false, "layer":"_basic"});
+    this.addLayer(100, {title: "titleScreen"});
+    this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});
   };
 
   asdfJSEngine.prototype.addLayer = function(layerIdx, newLayerOption){
@@ -19,16 +23,49 @@ define(["jquery", "underscore"],  function($, _){
     });
   };
 
-  function setVisible(visible){
+  asdfJSEngine.prototype.setVisible = function(visible){
     console.log(visible);
   }
 
-  function delLayer(){
+  //레이어 삭제함
+  asdfJSEngine.prototype.delLayer = function(layerIdx){
 
   }
 
-  function changeLayer(){
+  //레이어 우선순위를 변경함
+  asdfJSEngine.prototype.changeLayer = function(){
+    //enable, visible 적절히 변경함
+  }
 
+
+  //게임 화면 셋팅
+  function screenInit(){
+    if(gameDiv.length === 0){
+      $("body").prepend("<div id='gameDiv'></div>");
+      gameDiv = $("#gameDiv");
+    }
+
+    if(gameCanvas.length === 0){
+      gameDiv.prepend("<canvas id='gameCanvas'></canvas>");
+      gameCanvas = $("#gameCanvas");
+    }
+
+    gameDiv.css({
+      "width": "640px",
+      "height": "480px",
+      "border": "solid 1px black",
+      "padding": "0",
+      "margin": "0"
+    });
+
+    gameCanvas.css({
+      "width": "640px",
+      "height": "480px",
+      "padding": "0",
+      "margin": "0"
+    });
+
+    asdfJSEngine.prototype.screenContext = gameCanvas[0].getContext("2d");
   }
 
   function getLayer(){
