@@ -1,5 +1,5 @@
 //v0.0.1
-define(["jquery", "underscore", "bitmap"],  function($, _, Bitmap){
+define(["jquery", "underscore", "gameImage"],  function($, _, gameImage){
     'use strict';
   var currentLayerLevel = 100;
   var storeLayer = [];
@@ -7,9 +7,12 @@ define(["jquery", "underscore", "bitmap"],  function($, _, Bitmap){
   var gameCanvas = $("#gameCanvas");
   var dataParse;
 
-  var screenSize = {
-    w: 640,
-    h: 480
+  var screenConf = {
+    rw: 320, //rw, rh : 내부 구현 사이즈
+    rh: 240,
+    w: 640,  //css로 늘린 보이는 사이즈
+    h: 480,
+    frameRate: 60 // per sec
   }
 
   function asdfJSEngine(inst_dataParse){
@@ -19,10 +22,11 @@ define(["jquery", "underscore", "bitmap"],  function($, _, Bitmap){
 
 
     this.addLayer(100, {title: "titleScreen"});
-    this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});
+    //this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});
 
-    var a = new Bitmap(dataParse);
-    window.bitmap = a;
+    this.gameImage = new gameImage(dataParse);
+    this.painter.init(this);
+    this.painter.start();
   };
   asdfJSEngine.prototype.screenContext = null;
 
@@ -58,21 +62,21 @@ define(["jquery", "underscore", "bitmap"],  function($, _, Bitmap){
     }
 
     if(gameCanvas.length === 0){
-      gameDiv.prepend("<canvas id='gameCanvas' tabindex='0'></canvas>");
+      gameDiv.prepend("<canvas id='gameCanvas' width="+screenConf.rw+" height="+screenConf.rh+" tabindex='0'></canvas>");
       gameCanvas = $("#gameCanvas");
     }
 
     gameDiv.css({
-      "width": screenSize.w + "px",
-      "height": screenSize.h + "px",
+      "width": screenConf.w + "px",
+      "height": screenConf.h + "px",
       "border": "solid 1px black",
       "padding": "0",
       "margin": "0"
     });
 
     gameCanvas.css({
-      "width": screenSize.w + "px",
-      "height": screenSize.h + "px",
+      "width": screenConf.w + "px",
+      "height": screenConf.h + "px",
       "padding": "0",
       "margin": "0"
     });
@@ -117,7 +121,38 @@ define(["jquery", "underscore", "bitmap"],  function($, _, Bitmap){
         this.engine = scope
       },
       clear: function(){
-        this.engine.screenContext.fillRect(0, 0, screenSize.w, screenSize.h);
+        this.engine.screenContext.fillRect(0, 0, screenConf.w, screenConf.h);
+      },
+      start: function(){
+        this.draw();
+      },
+      drawHandler: null,
+      draw: function(){
+        this.drawHandler = setInterval(function(){
+          //배열을 거꾸로 돌려서 체크해야 하는데 for in은 거꾸로 못돌림... 그래서 한번 더 돌려서 체크함;;
+          var idxArr = [];
+          for(var idx in storeLayer){
+            var layerOpt = getLayer(idx).layerOption;
+            var layerOpt = getLayer(idx);
+            if(layerOpt.enabled === false) {
+              continue;
+            }
+
+            if(layerOpt.visible === false) {
+              continue;
+            }
+
+            idxArr.push(parseInt(idx));
+          }
+
+          //높은 순서부터 이벤트 체크함
+          var len = idxArr.length;
+          while(len){
+            getLayer(idxArr[len-1]).paint(this.engine.screenContext);
+
+            len--;
+          }
+        }, screenConf.frameRate/1000);
       }
   };
 
@@ -160,6 +195,46 @@ define(["jquery", "underscore", "bitmap"],  function($, _, Bitmap){
       }
     }
   }
+
+
+  asdfJSEngine.prototype.dotRush = function(imageData){
+    var x_lim = 8;
+    var y_lim = 6;
+    var x = 0;
+    var y = 0;
+
+    var i, j, k;
+
+    var bs = "";
+    var style = "";
+
+    var ctx = this.screenContext;
+
+
+    for(j=0; j<48; j++){
+      for(i=0; i<40; i++){
+        for(k=0; k<40; k++) {
+          var style = "#"+imageData[j][i][k];
+          if(bs != style) {
+            ctx.fillStyle = style;
+          }
+
+          ctx.fillRect(k+(x*40), i+(y*40), 1, 1);
+          //console.log(k+(x*40), i+(y*40), 1, 1);
+          bs = style;
+        }
+      }
+
+      x++;
+      if(x >= x_lim){
+        x=0;
+        y++;
+        if(y >= y_lim) break;
+      }
+    }
+  };
+
+
 
   return asdfJSEngine;
 });
