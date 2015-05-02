@@ -43,19 +43,6 @@ define(["underscore"],function(_){
     return hex;
   }
 
-  //title screen init
-  function titleScreenInit(){
-    var titleScreen = dataParse.get("skititl.dat");
-    return imageInit(titleScreen, imgData['ski.pal']);
-  }
-
-  //title screen init
-  function spriteInit(){
-    var titleScreen = dataParse.get("ski.dat");
-    return imageInit(titleScreen, imgData['ski.pal']);
-  }
-
-
   function imageInit(image, palData){
     var skipByte = 2;
     var i = 0, k = 0, j = 0;
