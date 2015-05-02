@@ -15,10 +15,12 @@ define(["underscore"],function(_){
   }
 
   function init(){
-    imgData['ski.pal'] = palleteInit();
-    imgData['skititl.dat'] = titleScreenInit();
-    //titleScreenData = spriteInit();
-    //titleScreenData = skiSelInit();
+    var pal = imgData['ski.pal'] = palleteInit();
+    var get = dataParse.get.bind(dataParse);
+
+    imgData['skititl.dat'] = imageInit(get("skititl.dat"), pal);
+    imgData['ski.dat']     = imageInit(get("ski.dat"),     pal);
+    imgData['skisel.dat']  = imageInit(get("skisel.dat"),  pal);
   }
 
 
@@ -44,6 +46,12 @@ define(["underscore"],function(_){
   //title screen init
   function titleScreenInit(){
     var titleScreen = dataParse.get("skititl.dat");
+    return imageInit(titleScreen, imgData['ski.pal']);
+  }
+
+  //title screen init
+  function spriteInit(){
+    var titleScreen = dataParse.get("ski.dat");
     return imageInit(titleScreen, imgData['ski.pal']);
   }
 
