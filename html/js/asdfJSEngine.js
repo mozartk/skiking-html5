@@ -12,7 +12,7 @@ define(["jquery", "underscore", "gameImage"],  function($, _, gameImage){
     rh: 240,
     w: 640,  //css로 늘린 보이는 사이즈
     h: 480,
-    frameRate: 60 // per sec
+    frameRate: 10 // per sec
   }
 
   function asdfJSEngine(inst_dataParse){
@@ -21,8 +21,8 @@ define(["jquery", "underscore", "gameImage"],  function($, _, gameImage){
     event.init();
 
 
-    this.addLayer(100, {title: "titleScreen"});
-    //this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});
+    this.addLayer(100, {title: "titleScreen", layer: "titleScreen"});
+    //this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});//
 
     this.gameImage = new gameImage(dataParse);
     this.painter.init(this);
