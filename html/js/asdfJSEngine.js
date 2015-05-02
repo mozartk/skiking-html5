@@ -1,5 +1,5 @@
 //v0.0.1
-define(["jquery", "underscore", "gameImage"],  function($, _, gameImage){
+define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameImage, soundFx){
     'use strict';
   var currentLayerLevel = 100;
   var storeLayer = [];
@@ -13,23 +13,38 @@ define(["jquery", "underscore", "gameImage"],  function($, _, gameImage){
     w: 640,  //css로 늘린 보이는 사이즈
     h: 480,
     frameRate: 10 // per sec
-  }
+  };
+
+  var libLoad = 0;
+  var libLoadState = 2;
+  var engine;
 
   function asdfJSEngine(inst_dataParse){
+    engine = this;
     dataParse = inst_dataParse;
     screenInit();
     event.init();
 
-
-    this.addLayer(100, {title: "titleScreen", layer: "titleScreen"});
     //this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});//
 
-    this.gameImage = new gameImage(dataParse);
-    this.painter.init(this);
-    this.painter.start();
+    this.gameImage = new gameImage(dataParse, waitDependent.bind(this));
+    this.soundFx   = new soundFx(dataParse.get("skisound.wad"), waitDependent.bind(this));
   };
-  asdfJSEngine.prototype.screenContext = null;
 
+  function waitDependent(engine){
+    libLoad++;
+    if(libLoadState >= libLoad){
+      run();
+    }
+  }
+
+  function run(){
+    engine.addLayer(100, {title: "titleScreen", layer: "titleScreen"});
+    engine.painter.init(this);
+    engine.painter.start();
+  }
+
+  asdfJSEngine.prototype.screenContext = null;
   asdfJSEngine.prototype.addLayer = function(layerIdx, newLayerOption){
     var layerOption = _.extend(defaultLayerOption(), newLayerOption, {layerLevel: layerIdx});
     var that = this;
@@ -133,7 +148,6 @@ define(["jquery", "underscore", "gameImage"],  function($, _, gameImage){
           var idxArr = [];
           for(var idx in storeLayer){
             var layerOpt = getLayer(idx).layerOption;
-            var layerOpt = getLayer(idx);
             if(layerOpt.enabled === false) {
               continue;
             }
@@ -152,7 +166,7 @@ define(["jquery", "underscore", "gameImage"],  function($, _, gameImage){
 
             len--;
           }
-        }, screenConf.frameRate/1000);
+        }, 1000/screenConf.frameRate);
       }
   };
 

@@ -4,10 +4,12 @@ define(["jquery", "underscore"],  function($, _){
 
   var titleScreen;
   var reDraw = false;
+  var soundFx;
 
   function titleScreenLayer(layerOption, engine){
     this.layerOption = layerOption;
     this.engine = engine;
+    soundFx = engine.soundFx;
 
     init();
   };
@@ -32,7 +34,9 @@ define(["jquery", "underscore"],  function($, _){
   titleScreenLayer.prototype.paint = function(ctx){
     if(reDraw === true){
       ctx.drawImage(titleScreen, 0, 0);
+      soundFx.play("titleskiking");
     }
+
 
     reDraw = false;
   }

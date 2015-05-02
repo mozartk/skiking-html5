@@ -3,13 +3,15 @@ define(["rawPCM"],
     'use strict';
 
     var dSelf; //global
+    var _completeFunc;
 
-    function soundFx(sound){
+    function soundFx(sound, completeFunc){
       var self = dSelf = this;
       this.context = new AudioContext();
       this.soundLoadComplete = false;
       this.sound = sound;
       this.soundLength = sound.length;
+      _completeFunc = completeFunc;
       this.cutPoint = [
         ['clap', 61450],
         ['oops', 64986],
@@ -66,6 +68,10 @@ define(["rawPCM"],
         if(typeof self.loadComplete === "function"){
           self.loadComplete(self.soundLoadCnt);
         }
+      }
+
+      if(typeof _completeFunc === "function"){
+        _completeFunc.call();
       }
 
       return function(){};
