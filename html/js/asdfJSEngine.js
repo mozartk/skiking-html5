@@ -23,6 +23,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
     engine = this;
     dataParse = inst_dataParse;
     screenInit();
+    this.screenContext.imageSmoothingEnabled = false;
     event.init();
 
     //this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});//
@@ -133,7 +134,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
   asdfJSEngine.prototype.painter = {
       engine: undefined,
       init: function(scope){
-        this.engine = scope
+        this.engine = scope;
       },
       clear: function(){
         this.engine.screenContext.fillRect(0, 0, screenConf.w, screenConf.h);
@@ -223,6 +224,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
     var style = "";
 
     var ctx = this.screenContext;
+
 
 
     for(j=0; j<48; j++){
