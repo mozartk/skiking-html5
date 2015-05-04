@@ -22,6 +22,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
   function asdfJSEngine(inst_dataParse){
     engine = this;
     dataParse = inst_dataParse;
+    this.screenConf = screenConf;
     screenInit();
     this.screenContext.imageSmoothingEnabled = false;
     event.init();
@@ -40,7 +41,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
   }
 
   function run(){
-    engine.addLayer(100, {title: "titleScreen", layer: "titleScreen"});
+    engine.addLayer(100, {title: "gameScreen", layer: "gameScreen"});
     engine.painter.init(this);
     engine.painter.start();
   }
