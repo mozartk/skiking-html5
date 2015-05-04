@@ -212,46 +212,5 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
     }
   }
 
-
-  asdfJSEngine.prototype.dotRush = function(imageData){
-    var x_lim = 8;
-    var y_lim = 6;
-    var x = 0;
-    var y = 0;
-
-    var i, j, k;
-
-    var bs = "";
-    var style = "";
-
-    var ctx = this.screenContext;
-
-
-
-    for(j=0; j<48; j++){
-      for(i=0; i<40; i++){
-        for(k=0; k<40; k++) {
-          var style = "#"+imageData[j][i][k];
-          if(bs != style) {
-            ctx.fillStyle = style;
-          }
-
-          ctx.fillRect(k+(x*40), i+(y*40), 1, 1);
-          //console.log(k+(x*40), i+(y*40), 1, 1);
-          bs = style;
-        }
-      }
-
-      x++;
-      if(x >= x_lim){
-        x=0;
-        y++;
-        if(y >= y_lim) break;
-      }
-    }
-  };
-
-
-
   return asdfJSEngine;
 });
