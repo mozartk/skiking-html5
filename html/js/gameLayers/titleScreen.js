@@ -10,6 +10,7 @@ define(["jquery", "underscore"],  function($, _){
     this.layerOption = layerOption;
     this.engine = engine;
     soundFx = engine.soundFx;
+    titleScreen  = engine.gameImage.getImage('skititl');
     this.init();
   };
 
@@ -18,7 +19,6 @@ define(["jquery", "underscore"],  function($, _){
   }
 
   function drawTitleScreen(){
-    titleScreen  = engine.gameImage.getImage('skititl');
     reDraw = true;
   }
 
