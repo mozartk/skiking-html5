@@ -11,6 +11,10 @@ define(["bitmap"],function(Bitmap){
   savedImageSize['ski'] = [4,5]
   savedImageSize['skisel'] = [2,2];
 
+  var tileIndex = {
+    'snow' :       [0,1,2,3,8,9,16,17,24,25]
+  };
+
   var tileResource = {};
 
   var _completeFunc;
@@ -36,22 +40,24 @@ define(["bitmap"],function(Bitmap){
   }
 
   function parseSprite(spriteData){
+
     getTile(spriteData);
   }
 
-  function getTile(spriteData){
+
+  function getTile(idx){
     //tile = 10x5
     //tile margin = x:5*2, y 5
-    var floor = [0,1,2,3,8,9,16,17,24,25];
-    tileResource['skitile'] = [];
-
-    var margin_x = 5;
-    var margin_y = 5;
-    var size_x = 10;
-    var size_y = 5;
+    var floor = tileIndex['snow'];
+    tileResource['floor'] = [];
 
     floor.forEach(function(v,k){
-      tileResource.push([]);
+      var row = Math.floor(v/8);
+      var column = ((v/8) - row)*8;
+      var r_row = row * 20;
+      var r_column = column * 20;
+
+      tileResource['floor'].push([r_row, r_column]);
     });
   }
 
@@ -74,6 +80,11 @@ define(["bitmap"],function(Bitmap){
     for(j=0; j<48; j++){
       for(i=0; i<40; i++){
         for(k=0; k<40; k++) {
+          //검은색 이미지는 투명한 이미지
+          if(imageData[j][i][k] === "000000") {
+            continue;
+          }
+
           var style = "#"+imageData[j][i][k];
           if(bs != style) {
             ctx.fillStyle = style;
@@ -95,8 +106,8 @@ define(["bitmap"],function(Bitmap){
     return canvas;
   }
 
-  gameImage.prototype.getTitleImage = function(){
-    return savedImage['skititl'];
+  gameImage.prototype.getImage = function(imageName){
+    return savedImage[imageName];
   }
 
   return gameImage;
