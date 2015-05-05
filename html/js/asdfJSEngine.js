@@ -1,5 +1,5 @@
 //v0.0.1
-define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameImage, soundFx){
+define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($, _, gameImage, soundFx, keyCode){
     'use strict';
   var currentLayerLevel = 100;
   var storeLayer = [];
@@ -12,7 +12,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
     rh: 240,
     w: 640,  //css로 늘린 보이는 사이즈
     h: 480,
-    frameRate: 20 // per sec
+    frameRate: 30 // per sec
   };
 
   var libLoad = 0;
@@ -21,6 +21,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
 
   function asdfJSEngine(inst_dataParse){
     engine = this;
+    this.keyCode = keyCode
     dataParse = inst_dataParse;
     this.screenConf = screenConf;
     screenInit();
@@ -117,7 +118,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
   //default layer option
   function defaultLayerOption(newOpt){
     var opt =  {
-      "keyEvent": ["click", "keyup", "keydown", "keypress"],
+      "keyEvent": ["click", "keyup", "keydown", "keypress", "touchstart"],
       "layer": "_basic",
       "enabled": true,
       "visible": true

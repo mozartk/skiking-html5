@@ -42,7 +42,7 @@ define([], function(){
   }
 
   stageMaker.prototype.get = function(level){
-    return makeProcess(3000);
+    return makeProcess(level);
   }
 
   //getProbability
@@ -58,7 +58,7 @@ define([], function(){
   function makeProcess(level){
     //field = [];
     var i = 0, k = 0;
-    var _level = level;//지형 + 배경(하늘, 도착지점)
+    var _level = (level*2) + 250;//지형
 
     var field = makeSky();
     var skyLen = (field.length-1);
@@ -78,7 +78,7 @@ define([], function(){
 
     //나무를 심습니다.
     //level에 따라서 심는 갯수가 달라짐
-    for(k=skyLen; k<=_level; k++){
+    for(k=skyLen; k<=_level; k=k+2){
       for(i=0; i<=31; i++){
         var result = getProbability(50);
         if(result % 50 === 0){
@@ -89,6 +89,7 @@ define([], function(){
 
     //마지막 결승선을 그립니다.
     field = makeEndLine(field);
+    window.field = field;
 
     return field;
   }
@@ -120,7 +121,7 @@ define([], function(){
     //sky 7, horizon 1
     //H 6, 8pixel
 
-    var endline = field.length-30;
+    var endline = field.length-150;
     var i = 0;
 
     var lineBuffer = document.createElement('canvas');
@@ -128,7 +129,9 @@ define([], function(){
     lineBuffer.height = 20;
 
     for(i=0; i<=31; i++){
-      field[endline][i] = 38;
+      field[endline-1][i] = getProbability(9);
+      field[endline][i] = 34;
+      field[endline-1][i] = getProbability(9);
     }
 
     return field;

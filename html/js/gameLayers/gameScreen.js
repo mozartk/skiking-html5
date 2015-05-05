@@ -6,16 +6,17 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var soundFx;
 
   var stage, stageLen, skiTile;
-  var gameSpeed = 3;
+  var gameSpeed = 4;
   var gameTick = 5;
 
   var player = {
     run: false, //run state
     skisel: 0, //skisel
-    skiselDirect:1, // 0left 1mid 2right
+    skiselDirection:1, // 0left 1mid 2right
     currentPosX:16, //0~31
     currentPosY:0, //scroll pos
-    dead: 0 //0alive 1dead
+    alive: true, //true alive    false dead
+    endLineStop: 20
   }
 
   var scrBuffer = document.createElement('canvas');
@@ -38,9 +39,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     'snowTrail':[0,1,2,3,8,9,16,17,24,25],
     'tree':[13],
     'sky':[52],
-    'horizon':[60, 61],
+    'horizon':[60,61],
     'endLine': [38,39] //두개를 위아래로 겹쳐서 4줄로 그려야 함(명암, 실제로는 2줄)
   };
+
+  var keyCode;
 
 
   window.maker = StageMaker;
@@ -48,6 +51,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   function gameScreenLayer(layerOption, engine){
     this.layerOption = layerOption;
     this.engine = engine;
+    keyCode = engine.keyCode;
     soundFx = engine.soundFx;
     skiTile  = engine.gameImage.getImage('ski');
 
@@ -68,7 +72,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function makeStage(){
     var stageMaker = new StageMaker();
-    stage = stageMaker.seed(Date.now()).get(1);
+    stage = stageMaker.seed(Date.now()).get(50);
     stageLen = stage.length;
 
     window.stage = stage;
@@ -79,10 +83,12 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       skisel: 0, //skisel
       skiselDirection:1, // 0left 1mid 2right
       currentPosX:16, //0~31
-      currentPosY:0, //scroll pos
+      currentPosY:16, //scroll pos
       speedState: 0, //0~1
       distance: 0, //0~~
-      dead: 0 //0alive 1dead
+      endLineStop: 20, //통화 후 20칸 움직임
+      alive: true, //0alive 1dead
+      clear: false
     };
   }
 
@@ -102,7 +108,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       compCtx.drawImage(skiTile, 145, 75, 10, 9, i, 29, 10, 1);
     }
 
-    //player
+    //player 0 mid
     compCtx.drawImage(skiTile, 9, 100,  2, 1,  12, 35, 2, 1);
     compCtx.drawImage(skiTile, 27, 100, 6, 10, 10, 36, 6, 19);
   }
@@ -132,8 +138,8 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function paintMaterial(ctx){
     var k = 0, i, j = 0;
-    var len = player.currentPosY+50;
-    for(i=player.currentPosY; i<=len; i++){
+    var len = player.currentPosY+50; //플레이어로부터 30칸 밑으로 더그
+    for(i=player.currentPosY; i<len; i++){
       var v = stage[i];
       v.forEach(function(vv, kk){
         if(vv == 20){
@@ -162,16 +168,16 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     };
   }
 
-  function playerDirection(){
+  function playerPosInfo(){
     var spritePos = {};
     switch(player.skisel){
       case 0:
         spritePos = {
-          x: 10,
-          y: 35,
-          w: 6,
-          h: 20,
-          cx: 160,
+          x : 10,
+          y : 35,
+          w : 6,
+          h : 20,
+          cx: (player.currentPosX*10)+3,
           cy: 125,
           rw: 6,
           rh: 20
@@ -183,7 +189,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   }
 
   function paintPlayer(){
-    var p = playerDirection();
+    var p = playerPosInfo();
     bufferCtx.drawImage(compImg, p.x, p.y, p.w, p.h, p.cx, p.cy, p.rw, p.rh);
   }
 
@@ -193,17 +199,41 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
     //없을 경우
     if(false){
-      player.distance++;
+
+      //이동하면 몸 흔들거리는 flag
+      //스프라이트로 볼 때 이동하면 몸이 흔들거려야 하는데
+      //스프라이트만 있고 실게임에서도 구현 안되어있음.
+      //일단 소스만 남겨둠
       if(player.distance%4 <= 1){
         player.state = 1;
       } else {
         player.state = 0;
       }
-    } else {
-      player.dead = true;
     }
 
+    //살아있으면 기록 +1점
+    //결승전 통과하면 집계하지 않음.
+    if(player.alive === true &&
+      player.clear === false){
+      player.distance++;
+    }
+
+    //결승전 통과하면 20칸 이동 후 이동 종료
+    if(player.clear === true){
+      player.endLineStop--;
+      if(player.endLineStop){
+        player.run = false;
+      }
+    }
+
+    console.log(stage[player.currentPosY+2]);
+
     player.currentPosY += 2;
+    if(player.skiselDirection === 0){
+      if(player.currentPosX > 0) player.currentPosX--;
+    } else if(player.skiselDirection === 2){
+      if(player.currentPosX < 31) player.currentPosX++;
+    }
   }
 
   function getTile(resourceId){
@@ -226,7 +256,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   }
 
   function finishRun(){
-    player.run = true;
+    player.clear = true;
   }
 
 
@@ -234,18 +264,17 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   //true를 리턴하면 키를 여기서 먹도록 처리
   //false를 리턴하면 여기서 키 이벤트를 다시 상위로 보냄, 이 경우에는 다른 레이어로 키 이벤트를 다시 보내도록 처리해야 함
   gameScreenLayer.prototype.event = function(e){
-    if(e.type == 'keydown') {
+    if(e.type == 'keydown' || e.type == 'touchstart') {
       switch (e.keyCode) {
-        //case 40:
-        //  if(player.currentPosY <=stageLen) {
-        //    player.currentPosY += 2;
-        //  }
-        //  break;
-        //case 38:
-        //  if(player.currentPosY >=2) {
-        //    player.currentPosY -= 2;
-        //  }
-        //  break;
+        case keyCode.VK_DOWN:
+            player.skiselDirection = 1;
+          break;
+        case keyCode.VK_LEFT:
+          player.skiselDirection = 0;
+          break;
+        case keyCode.VK_RIGHT:
+          player.skiselDirection = 2;
+          break;
       }
 
       if(player.run !== true){
