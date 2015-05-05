@@ -12,7 +12,7 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
     rh: 240,
     w: 640,  //css로 늘린 보이는 사이즈
     h: 480,
-    frameRate: 10 // per sec
+    frameRate: 20 // per sec
   };
 
   var libLoad = 0;
@@ -135,15 +135,19 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
   asdfJSEngine.prototype.painter = {
       engine: undefined,
       init: function(scope){
-        this.engine = scope;
+        engine.painter.engine = scope;
       },
       clear: function(){
-        this.engine.screenContext.fillRect(0, 0, screenConf.w, screenConf.h);
+        engine.screenContext.fillRect(0, 0, screenConf.w, screenConf.h);
       },
       start: function(){
-        this.draw();
+        engine.painter.draw();
       },
       drawHandler: null,
+      _redraw: true,
+      redraw: function(){
+        engine.painter._redraw = true;
+      },
       draw: function(){
         this.drawHandler = setInterval(function(){
           //배열을 거꾸로 돌려서 체크해야 하는데 for in은 거꾸로 못돌림... 그래서 한번 더 돌려서 체크함;;
@@ -163,10 +167,16 @@ define(["jquery", "underscore", "gameImage", "soundFx"],  function($, _, gameIma
 
           //높은 순서부터 이벤트 체크함
           var len = idxArr.length;
-          while(len){
-            getLayer(idxArr[len-1]).paint(this.engine.screenContext);
+          if(len > 0 && engine.painter._redraw === true){
 
-            len--;
+            //engine.painter.clear.call(this);
+            while(len){
+              getLayer(idxArr[len-1]).paint(engine.screenContext);
+
+              len--;
+            }
+
+            //engine.painter._redraw = false;
           }
         }, 1000/screenConf.frameRate);
       }

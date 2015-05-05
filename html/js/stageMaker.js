@@ -8,6 +8,8 @@ define([], function(){
     32,33 지평선
     34,35 목표지점
 
+    36 집
+
 
 
 
@@ -24,7 +26,9 @@ define([], function(){
     'tree':[13],
     'sky':[52],
     'horizon':[60, 61],
-    'endLine': [38,39] //두개를 위아래로 겹쳐서 4줄로 그려야 함(명암, 실제로는 2줄)
+    'endLine': [38,39], //두개를 위아래로 겹쳐서 4줄로 그려야 함(명암, 실제로는 2줄)
+    'startfloor': [64, 65],
+    'startbottom': [62, 63]
   }
 
   function stageMaker(){
@@ -38,7 +42,7 @@ define([], function(){
   }
 
   stageMaker.prototype.get = function(level){
-    return makeProcess(300);
+    return makeProcess(3000);
   }
 
   //getProbability
@@ -83,7 +87,8 @@ define([], function(){
       }
     }
 
-
+    //마지막 결승선을 그립니다.
+    field = makeEndLine(field);
 
     return field;
   }
@@ -105,21 +110,28 @@ define([], function(){
       arr = null;
     }
 
+    //출발지점
+    sky[27][14] = 36;
+
     return sky;
   }
 
-  function makeEndLine(){
+  function makeEndLine(field){
     //sky 7, horizon 1
     //H 6, 8pixel
-    var i, k;
-    var sky = [];
-    for(k=0; k<24; k++){
-      var arr = new Array();
-      for(i=0; i<=31; i++){
-      }
-      sky.push(arr);
-      arr = null;
+
+    var endline = field.length-30;
+    var i = 0;
+
+    var lineBuffer = document.createElement('canvas');
+    lineBuffer.width = 10;
+    lineBuffer.height = 20;
+
+    for(i=0; i<=31; i++){
+      field[endline][i] = 38;
     }
+
+    return field;
   }
 
 
