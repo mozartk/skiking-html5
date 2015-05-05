@@ -9,15 +9,17 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var gameSpeed = 4;
   var gameTick = 5;
 
-  var player = {
-    run: false, //run state
-    skisel: 0, //skisel
-    skiselDirection:1, // 0left 1mid 2right
-    currentPosX:16, //0~31
-    currentPosY:0, //scroll pos
-    alive: true, //true alive    false dead
-    endLineStop: 20
-  }
+  var player = {};
+  player['run'] =  false;
+  player['skisel'] =  0; //skisel
+  player['skiselDirection'] =  1; //0left 1mid 2right
+  player['speedState'] = 0;//0~31
+  player['currentPosX'] =  16;//scroll pos
+  player['currentPosY'] =  0;//0~1
+  player['alive'] =  true; //0alive 1dead
+  player['distance'] =  0; //0~~
+  player['endLineStop'] =  20//통화 후 20칸 움직임
+  player['clear'] =  false; //
 
   var scrBuffer = document.createElement('canvas');
   scrBuffer.width = engine.screenConf.rw;
@@ -51,6 +53,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   function gameScreenLayer(layerOption, engine){
     this.layerOption = layerOption;
     this.engine = engine;
+    this.player = player;
     keyCode = engine.keyCode;
     soundFx = engine.soundFx;
     skiTile  = engine.gameImage.getImage('ski');
@@ -72,24 +75,23 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function makeStage(){
     var stageMaker = new StageMaker();
-    stage = stageMaker.seed(Date.now()).get(50);
+    stage = stageMaker.seed(Date.now()).get(10);
     stageLen = stage.length;
 
     window.stage = stage;
   }
 
   function playerInit(){
-    player = {
-      skisel: 0, //skisel
-      skiselDirection:1, // 0left 1mid 2right
-      currentPosX:16, //0~31
-      currentPosY:16, //scroll pos
-      speedState: 0, //0~1
-      distance: 0, //0~~
-      endLineStop: 20, //통화 후 20칸 움직임
-      alive: true, //0alive 1dead
-      clear: false
-    };
+    player['run'] =  false;
+    player['skisel'] =  0; //skisel
+    player['skiselDirection'] =  1; //0left 1mid 2right
+    player['speedState'] = 0;//0~31
+    player['currentPosX'] =  16;//scroll pos
+    player['currentPosY'] =  0;//0~1
+    player['alive'] =  true; //0alive 1dead
+    player['distance'] =  0; //0~~
+    player['endLineStop'] =  20//통화 후 20칸 움직임
+    player['clear'] =  false; //
   }
 
   function makeCompImage(){
@@ -188,6 +190,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     return spritePos;
   }
 
+  function currentfloorInfo(num){
+    if(typeof num === "undefined") num = 0;
+    return stage[player.currentPosY+30+(num)];
+  }
+
   function paintPlayer(){
     var p = playerPosInfo();
     bufferCtx.drawImage(compImg, p.x, p.y, p.w, p.h, p.cx, p.cy, p.rw, p.rh);
@@ -196,6 +203,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   //처리 후 한칸 전진
   function playerFF(){
     //앞에 장애물이 있는지 확인
+
+    var line = currentfloorInfo();
+    if(line[0] == 34){
+      soundFx.play("clap");
+    }
 
     //없을 경우
     if(false){
@@ -226,8 +238,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       }
     }
 
-    console.log(stage[player.currentPosY+2]);
-
     player.currentPosY += 2;
     if(player.skiselDirection === 0){
       if(player.currentPosX > 0) player.currentPosX--;
@@ -253,10 +263,15 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function startRun(){
     player.run = true;
+    soundFx.play("youwillgo");
   }
 
   function finishRun(){
     player.clear = true;
+  }
+
+  function stopRun(){
+    player.run = false;
   }
 
 
@@ -267,17 +282,26 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     if(e.type == 'keydown' || e.type == 'touchstart') {
       switch (e.keyCode) {
         case keyCode.VK_DOWN:
-            player.skiselDirection = 1;
+            this.player.skiselDirection = 1;
           break;
         case keyCode.VK_LEFT:
-          player.skiselDirection = 0;
+          if(this.player.skiselDirection !== 0){
+            soundFx.play("whee");
+          }
+          this.player.skiselDirection = 0;
           break;
         case keyCode.VK_RIGHT:
-          player.skiselDirection = 2;
+          if(this.player.skiselDirection !== 2){
+            soundFx.play("whoo");
+          }
+          this.player.skiselDirection = 2;
+          break;
+        case keyCode.VK_SPACE:
+          stopRun();
           break;
       }
 
-      if(player.run !== true){
+      if(this.player.run !== true){
         startRun();
         drawGameScreen();
       }
@@ -297,18 +321,23 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       ctx.drawImage(scrBuffer, 0, 0);
     }
 
-    drawGameScreen();
+    if(this.player.run === false){
 
-    if(player.run === true) {
+
+    }
+    if(this.player.run === true) {
       gameTick++;
       if (gameTick % gameSpeed === 0) {
         playerFF();
       }
 
-
+      drawGameScreen();
     } else {
       reDraw = false;
     }
+
+
+
 
 
   }

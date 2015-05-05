@@ -42,7 +42,8 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
   }
 
   function run(){
-    engine.addLayer(100, {title: "gameScreen", layer: "gameScreen"});
+    engine.addLayer(100, {title: "titleScreen", layer: "titleScreen"});
+    engine.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"gameScreen"});
     engine.painter.init(this);
     engine.painter.start();
   }
@@ -57,8 +58,11 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     });
   };
 
-  asdfJSEngine.prototype.setVisible = function(visible){
-    console.log(visible);
+  asdfJSEngine.prototype.setVisible = function(num, visible){
+    var layer = getLayer(num);
+    layer.layerOption['visible'] = visible;
+    layer.layerOption['enabled'] = visible;
+    console.log(layer);
   }
 
   //레이어 삭제함
@@ -214,8 +218,8 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
       //높은 순서부터 이벤트 체크함
       var len = idxArr.length;
       while(len){
-        var result = getLayer(idxArr[len-1]).event(arguments[0]);
-
+        var layer = getLayer(idxArr[len-1]);
+        var result = layer.event.call(layer, arguments[0]);
         if(result) break; //true이면 이벤트 전파를 종료함
 
         len--;
