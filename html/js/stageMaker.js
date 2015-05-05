@@ -1,21 +1,30 @@
 define([], function(){
   /*
   0~50 바닥
-    0~20 눈(나무 포함)
-    20~ 눈 밟음
+    0~10 눈
+    11~20 눈흔적
+    20 나무
+    30,31 하늘
+    32,33 지평선
+    34,35 목표지점
+
 
 
 
 
    */
 
-  var timeStamp;
+  var timeStamp, tempStamp;
 
   var field = [];
 
   var tile = {
     'snow':[0,1,2,3,8,9,16,17,24,25],
-    'tree':[4,5,9,10,11,12,13,18,19,26,27]
+    'snowTrail':[0,1,2,3,8,9,16,17,24,25],
+    'tree':[13],
+    'sky':[52],
+    'horizon':[60, 61],
+    'endLine': [38,39] //두개를 위아래로 겹쳐서 4줄로 그려야 함(명암, 실제로는 2줄)
   }
 
   function stageMaker(){
@@ -23,8 +32,8 @@ define([], function(){
   }
 
   stageMaker.prototype.seed = function(timeStamp){
-    timeStamp = timeStamp;
-    tempStamp = timeStamp;
+    tempStamp = timeStamp = timeStamp;
+
     return this;
   }
 
@@ -43,13 +52,16 @@ define([], function(){
   }
 
   function makeProcess(level){
-    field = [];
+    //field = [];
     var i = 0, k = 0;
     var _level = level;//지형 + 배경(하늘, 도착지점)
 
+    var field = makeSky();
+    var skyLen = (field.length-1);
+
     //우선 바닥에 눈을 깔아 놓습니다...
     //눈 타일이 10개이므로 10개 랜덤하게 깝니다.
-    for(k=0; k<=_level; k++){
+    for(k=skyLen; k<=_level; k++){
       var arr = new Array();
       for(i=0; i<=31; i++){
         var result = getProbability(9);
@@ -62,26 +74,53 @@ define([], function(){
 
     //나무를 심습니다.
     //level에 따라서 심는 갯수가 달라짐
-    for(k=0; k<=_level; k++){
+    for(k=skyLen; k<=_level; k++){
       for(i=0; i<=31; i++){
         var result = getProbability(50);
         if(result % 50 === 0){
-          field[k][i] = 13;
+          field[k][i] = 20;
         }
       }
     }
 
+
+
     return field;
   }
 
-  //var i = 0;
-  //var arr = new Uint8Array(100);
-  //var seed = Date.now();
-  //while(i<=1000000){
-  //  //var result = Math.floor(Math.random() * 100) + 1;
-  //  arr[result]++;
-  //  i++;
-  //}
+  function makeSky(){
+    var sky = [];
+    for(k=0; k<56; k++){
+      var arr = new Array();
+      for(i=0; i<=31; i++){
+        if(k < 14){
+          arr.push(30);
+        } else if(k === 14) {
+          arr.push(getProbability(2)+32);
+        } else {
+          arr.push(getProbability(9));
+        }
+      }
+      sky.push(arr);
+      arr = null;
+    }
+
+    return sky;
+  }
+
+  function makeEndLine(){
+    //sky 7, horizon 1
+    //H 6, 8pixel
+    var i, k;
+    var sky = [];
+    for(k=0; k<24; k++){
+      var arr = new Array();
+      for(i=0; i<=31; i++){
+      }
+      sky.push(arr);
+      arr = null;
+    }
+  }
 
 
 
