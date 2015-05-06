@@ -62,7 +62,8 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     var layer = engine.getLayer(num);
     layer.layerOption['visible'] = visible;
     layer.layerOption['enabled'] = visible;
-    console.log(layer);
+
+    return layer;
   }
 
   //레이어 삭제함
@@ -176,12 +177,11 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
 
           //높은 순서부터 이벤트 체크함
           var len = idxArr.length;
-          if(len > 0 && engine.painter._redraw === true){
-
+          //if(len > 0 && engine.painter._redraw === true){
+          if(true){
             //engine.painter.clear.call(this);
             while(len){
               engine.getLayer(idxArr[len-1]).paint(engine.screenContext);
-
               len--;
             }
 

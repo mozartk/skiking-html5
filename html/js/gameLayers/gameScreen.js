@@ -59,10 +59,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     soundFx = engine.soundFx;
     skiTile  = engine.gameImage.getImage('ski');
 
-    init();
+    this.init();
   };
 
-  function init(){
+  gameScreenLayer.prototype.init = function(){
     makeStage();
     makeCompImage();
     playerInit();
@@ -203,16 +203,14 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   //처리 후 한칸 전진
   function playerFF(){
-    //앞에 장애물이 있는지 확인
-
     var line = currentfloorInfo();
     if(line[0] == 34){
       soundFx.play("clap");
+      player.clear = true;
     }
 
     //없을 경우
     if(false){
-
       //이동하면 몸 흔들거리는 flag
       //스프라이트로 볼 때 이동하면 몸이 흔들거려야 하는데
       //스프라이트만 있고 실게임에서도 구현 안되어있음.
@@ -234,7 +232,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     //결승전 통과하면 20칸 이동 후 이동 종료
     if(player.clear === true){
       player.endLineStop--;
-      if(player.endLineStop){
+      if(player.endLineStop <= 0){
         player.run = false;
       }
     }
@@ -264,7 +262,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function startRun(){
     player.run = true;
-    soundFx.play("youwillgo");
+    //soundFx.play("youwillgo");
   }
 
   function finishRun(){
@@ -273,6 +271,14 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function stopRun(){
     player.run = false;
+  }
+
+
+
+  function goToTitle(){
+    engine.setVisible(100, true);
+    engine.setVisible(101, false);
+    engine.getLayer(100).init();
   }
 
 
@@ -300,6 +306,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
         case keyCode.VK_SPACE:
           stopRun();
           break;
+        case keyCode.VK_ESCAPE:
+          goToTitle();
+          break;
       }
 
       if(this.player.run !== true){
@@ -322,10 +331,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       ctx.drawImage(scrBuffer, 0, 0);
     }
 
-    if(this.player.run === false){
-
-
-    }
     if(this.player.run === true) {
       gameTick++;
       if (gameTick % gameSpeed === 0) {
