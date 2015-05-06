@@ -9,17 +9,20 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var gameSpeed = 4;
   var gameTick = 5;
 
-  var player = {};
-  player['run'] =  false;
-  player['skisel'] =  0; //skisel
-  player['skiselDirection'] =  1; //0left 1mid 2right
-  player['speedState'] = 0;//0~31
-  player['currentPosX'] =  16;//scroll pos
-  player['currentPosY'] =  0;//0~1
-  player['alive'] =  true; //0alive 1dead
-  player['distance'] =  0; //0~~
-  player['endLineStop'] =  20//통화 후 20칸 움직임
-  player['clear'] =  false; //
+  var player = {
+    run: false,
+    stage: 1,           //currentStage
+    skisel: 0,          //skisel
+    skiselDirection: 1, //0left 1mid 2right
+    speedState: 0,      //0~31
+    currentPosX: 16,    //scroll pos
+    currentPosY: 0,     //0~1
+    alive: true,        //0alive 1dead
+    distance: 0,        //0~~
+    endLineStop: 20,    //통화 후 20칸 움직임
+    clear: false        //
+  };
+
 
   var scrBuffer = document.createElement('canvas');
   scrBuffer.width = engine.screenConf.rw;
@@ -79,7 +82,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     stage = stageMaker.seed(Date.now()).get(10);
     stageLen = stage.length;
 
-    window.stage = stage;
   }
 
   function playerInit(){
@@ -114,10 +116,17 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     //player 0 mid
     compCtx.drawImage(skiTile, 9, 100,  2, 1,  12, 35, 2, 1);
     compCtx.drawImage(skiTile, 27, 100, 6, 10, 10, 36, 6, 19);
+
+    //player 0 left
+    compCtx.drawImage(skiTile, 25, 90, 10, 11, 10, 55, 12, 20);
+    compCtx.drawImage(skiTile, 5,  90, 10, 11, 10, 55, 12, 20);
+
+    //player 0 right
+    compCtx.drawImage(skiTile, 4, 110, 11, 10, 10, 75, 12, 20);
+    compCtx.drawImage(skiTile, 25, 110, 10, 10, 10, 75, 12, 20);
   }
 
   function paintStage(){
-    //stage.forEach(function(v,k){
     var k = 0;
     var i = player.currentPosY;
     var len = player.currentPosY+50;
@@ -172,19 +181,34 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   }
 
   function playerPosInfo(){
-    var spritePos = {};
-    switch(player.skisel){
+    var spritePos = {
+      x : 10,
+      y : 35,
+      w : 6,
+      h : 20,
+      cx: (player.currentPosX*10)+3,
+      cy: 125,
+      rw: 6,
+      rh: 20
+    };
+
+    switch(player.skiselDirection){
       case 0:
-        spritePos = {
-          x : 10,
-          y : 35,
-          w : 6,
-          h : 20,
-          cx: (player.currentPosX*10)+3,
-          cy: 125,
-          rw: 6,
-          rh: 20
-        }
+        spritePos.w = 11;
+        spritePos.rw = 10;
+        spritePos.x = 10;
+        spritePos.y = 55;
+        break;
+      case 2:
+        spritePos.w = 11;
+        spritePos.rw = 10;
+        spritePos.x = 10;
+        spritePos.y = 75;
+        break;
+      case 1:
+        spritePos.w = 6;
+        spritePos.x = 10;
+        spritePos.y = 35;
         break;
     }
 
@@ -207,6 +231,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     if(line[0] == 34){
       soundFx.play("clap");
       player.clear = true;
+    }
+
+    if(player.distance === 1){
+      soundFx.play("youwillgo");
     }
 
     //없을 경우
@@ -262,7 +290,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function startRun(){
     player.run = true;
-    //soundFx.play("youwillgo");
   }
 
   function finishRun(){
@@ -287,6 +314,19 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   //false를 리턴하면 여기서 키 이벤트를 다시 상위로 보냄, 이 경우에는 다른 레이어로 키 이벤트를 다시 보내도록 처리해야 함
   gameScreenLayer.prototype.event = function(e){
     if(e.type == 'keydown' || e.type == 'touchstart') {
+      //게임 클리어 / 게임 오버 시 방향키는 먹히지 말아야 함.
+      switch (e.keyCode) {
+        case keyCode.VK_DOWN:
+        case keyCode.VK_LEFT:
+        case keyCode.VK_RIGHT:
+          if(this.player.endLineStop === 0){
+            return false;
+          }
+          break;
+      }
+
+
+
       switch (e.keyCode) {
         case keyCode.VK_DOWN:
             this.player.skiselDirection = 1;
@@ -311,12 +351,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           break;
       }
 
-      if(this.player.run !== true){
+      if(player.run !== true && player.clear !== true){
         startRun();
         drawGameScreen();
       }
-
-
     }
 
     return true;
