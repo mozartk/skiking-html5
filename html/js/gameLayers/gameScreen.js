@@ -53,6 +53,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   function gameScreenLayer(layerOption, engine){
     this.layerOption = layerOption;
     this.engine = engine;
+    this.engine.setLayer(this);
     this.player = player;
     keyCode = engine.keyCode;
     soundFx = engine.soundFx;

@@ -53,13 +53,13 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     var layerOption = _.extend(defaultLayerOption(), newLayerOption, {layerLevel: layerIdx});
     var that = this;
 
-    require(["gameLayers/" + layerOption.layer], function(basicLayer){
-      storeLayer[layerIdx] = new basicLayer(layerOption, that);
+    require(["gameLayers/" + layerOption.layer], function(gameLayer){
+      new gameLayer(layerOption, that);
     });
   };
 
   asdfJSEngine.prototype.setVisible = function(num, visible){
-    var layer = getLayer(num);
+    var layer = engine.getLayer(num);
     layer.layerOption['visible'] = visible;
     layer.layerOption['enabled'] = visible;
     console.log(layer);
@@ -106,7 +106,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     asdfJSEngine.prototype.screenContext = gameCanvas[0].getContext("2d");
   }
 
-  function getLayer(){
+  asdfJSEngine.prototype.getLayer = function(){
     var layerIdx;
     if(typeof parseInt(arguments[0]) === "number"){
       layerIdx = arguments[0];
@@ -115,6 +115,10 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     }
 
     return storeLayer[layerIdx];
+  }
+
+  asdfJSEngine.prototype.setLayer = function(layer){
+    storeLayer[layer.layerOption.layerLevel] = layer;
   }
 
 
@@ -158,7 +162,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
           //배열을 거꾸로 돌려서 체크해야 하는데 for in은 거꾸로 못돌림... 그래서 한번 더 돌려서 체크함;;
           var idxArr = [];
           for(var idx in storeLayer){
-            var layerOpt = getLayer(idx).layerOption;
+            var layerOpt = engine.getLayer(idx).layerOption;
             if(layerOpt.enabled === false) {
               continue;
             }
@@ -176,7 +180,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
 
             //engine.painter.clear.call(this);
             while(len){
-              getLayer(idxArr[len-1]).paint(engine.screenContext);
+              engine.getLayer(idxArr[len-1]).paint(engine.screenContext);
 
               len--;
             }
@@ -208,7 +212,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
       //배열을 거꾸로 돌려서 체크해야 하는데 for in은 거꾸로 못돌림... 그래서 한번 더 돌려서 체크함;;
       var idxArr = [];
       for(var idx in storeLayer){
-        if(getLayer(idx).layerOption.enabled === false) {
+        if(engine.getLayer(idx).layerOption.enabled === false) {
           continue;
         }
 
@@ -218,7 +222,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
       //높은 순서부터 이벤트 체크함
       var len = idxArr.length;
       while(len){
-        var layer = getLayer(idxArr[len-1]);
+        var layer = engine.getLayer(idxArr[len-1]);
         var result = layer.event.call(layer, arguments[0]);
         if(result) break; //true이면 이벤트 전파를 종료함
 
