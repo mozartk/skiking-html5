@@ -19,7 +19,7 @@ define(["underscore"],function(_){
     var get = dataParse.get.bind(dataParse);
 
     imgData['skititl.dat'] = imageInit(get("skititl.dat"), pal);
-    imgData['ski.dat']     = imageInit(get("ski.dat"),     pal);
+    imgData['ski.dat']     = SpriteInit(get("ski.dat"),    pal);
     imgData['skisel.dat']  = imageInit(get("skisel.dat"),  pal);
   }
 
@@ -62,6 +62,33 @@ define(["underscore"],function(_){
       imageTotal.push(arr);
 
       imageArr = null;
+      imageArr = new Array();
+    }
+
+    return imageTotal;
+  }
+
+
+  function SpriteInit(image, palData){
+    var skipByte = 2;
+    var i = 0, k = 0, j = 0;
+
+    var imageTotal = [];
+    var byte = skipByte;
+
+    var imageArr = new Array();
+    for(j=0; j<68; j++){
+      for(i=0; i<20; i++){
+        imageArr[i] = new Array();
+        imageArr[i+1] = new Array();
+        for(k=0; k<20; k++) {
+          imageArr[i][k] = palData[image[byte++]];
+          imageArr[i+1][k+1] = palData[image[byte+20]];
+        }
+      }
+      var arr = _.clone(imageArr);
+      imageTotal.push(arr);
+
       imageArr = new Array();
     }
 

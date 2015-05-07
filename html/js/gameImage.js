@@ -31,7 +31,11 @@ define(["bitmap"],function(Bitmap){
       _canvasBuf.width = savedImageSize[i][0] * 40;
       _canvasBuf.height = savedImageSize[i][1] * 40;
 
-      savedImage[i] = preDraw(i+".dat", _canvasBuf, savedImageSize[i]);
+      if(i === "ski"){ //sprites... ski.dat
+        savedImage[i] = preSprites(i+".dat", _canvasBuf, savedImageSize[i]);
+      } else {
+        savedImage[i] = preDraw(i+".dat", _canvasBuf, savedImageSize[i]);
+      }
     }
 
     parseSprite(savedImage['ski.dat']);
@@ -40,21 +44,19 @@ define(["bitmap"],function(Bitmap){
   }
 
   function parseSprite(spriteData){
-
     getTile(spriteData);
   }
 
 
   function getTile(idx){
-    //tile = 10x5
-    //tile margin = x:5*2, y 5
+    //tile = 20x20
     var floor = tileIndex['snow'];
     tileResource['floor'] = [];
 
     floor.forEach(function(v,k){
       var row = Math.floor(v/8);
       var column = ((v/8) - row)*8;
-      var r_row = row * 20;
+      var r_row = row * 40;
       var r_column = column * 20;
 
       tileResource['floor'].push([r_row, r_column]);
@@ -104,6 +106,48 @@ define(["bitmap"],function(Bitmap){
     }
 
     return canvas;
+  }
+
+  function preSprites(imageName, canvas, size){
+    var imageData = bitmap.get(imageName);
+    var x_lim = size[0];
+    var y_lim = size[1];
+    var x = 0;
+    var y = 0;
+
+    var i, j, k;
+
+    var bs = "";
+    var style = "";
+
+    var ctx = canvas.getContext('2d');
+
+
+    for(j=0; j<68; j++){
+      for(i=0; i<20; i++){
+        for(k=0; k<20; k++) {
+          //var s = Date.now();
+          var style = "#"+imageData[j][i][k];
+          if(bs != style) {
+            ctx.fillStyle = style;
+          }
+
+          ctx.fillRect(k+(x*20), i+(y*20), 1, 1);
+          //var e = Date.now();
+
+          //console.log(j+" "+i+" "+k + ":" + (e-s) + "/"+style);
+          bs = style;
+        }
+      }
+
+      x++;
+      if(x >= x_lim){
+        x=0;
+        console.log('a');
+        y++;
+        if(y >= y_lim) break;
+      }
+    }
   }
 
   gameImage.prototype.getImage = function(imageName){
