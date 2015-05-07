@@ -12,7 +12,7 @@ define(["bitmap"],function(Bitmap){
   savedImageSize['skisel'] = [2,2];
 
   var tileIndex = {
-    'snow' :       [0,1,2,3,8,9,16,17,24,25]
+    'snow' :       [0,1,2,3,4]
   };
 
   var tileResource = {};
@@ -38,29 +38,7 @@ define(["bitmap"],function(Bitmap){
       }
     }
 
-    parseSprite(savedImage['ski.dat']);
-
     _completeFunc();
-  }
-
-  function parseSprite(spriteData){
-    getTile(spriteData);
-  }
-
-
-  function getTile(idx){
-    //tile = 20x20
-    var floor = tileIndex['snow'];
-    tileResource['floor'] = [];
-
-    floor.forEach(function(v,k){
-      var row = Math.floor(v/8);
-      var column = ((v/8) - row)*8;
-      var r_row = row * 40;
-      var r_column = column * 20;
-
-      tileResource['floor'].push([r_row, r_column]);
-    });
   }
 
   //먼저 버퍼로 가지고 있어야 할 이미지들을 미리 버퍼에 만들어 놓음
