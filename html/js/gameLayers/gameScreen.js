@@ -31,16 +31,8 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var bufferCtx  = scrBuffer.getContext('2d');
   bufferCtx.imageSmoothingEnabled = false;
 
-  //미리 준비해 놓는 합성 이미지
-  var compImg = document.createElement('canvas');
-  compImg.width = engine.screenConf.rw;
-  compImg.height = engine.screenConf.rh;
-
-  var compCtx  = compImg.getContext('2d');
-  compCtx.imageSmoothingEnabled = false;
-
   var gameSprites = {
-    'snow':[0,1,2,3,8,9,16,17,24,25],
+    'snow':[0,1,2,3,4],
     'snowTrail':[0,1,2,3,8,9,16,17,24,25],
     'tree':[13],
     'sky':[52],
@@ -67,7 +59,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   gameScreenLayer.prototype.init = function(){
     makeStage();
-    makeCompImage();
     playerInit();
     drawGameScreen();
   }
@@ -95,35 +86,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     player['distance'] =  0; //0~~
     player['endLineStop'] =  20//통화 후 20칸 움직임
     player['clear'] =  false; //
-  }
-
-  function makeCompImage(){
-    //결승선
-    compCtx.drawImage(skiTile, 145, 46, 10, 2, 5, 5, 10, 1);
-    compCtx.drawImage(skiTile, 125, 47, 10, 2, 5, 6, 10, 1);
-    compCtx.drawImage(skiTile, 145, 46, 10, 2, 5, 7, 10, 1);
-    compCtx.drawImage(skiTile, 125, 47, 10, 2, 5, 8, 10, 1);
-
-    //시작시점
-    for(var i=10; i<=40; i=i+10){
-      compCtx.drawImage(skiTile, 5, 85, 10, 5, i, 10, 10, 5);
-      compCtx.drawImage(skiTile, 25, 85, 10, 5, i, 15, 10, 5);
-      compCtx.drawImage(skiTile, 125, 75, 10, 1, i, 20, 10, 1);
-      compCtx.drawImage(skiTile, 125, 76, 10, 4, i, 21, 10, 9);
-      compCtx.drawImage(skiTile, 145, 75, 10, 9, i, 29, 10, 1);
-    }
-
-    //player 0 mid
-    compCtx.drawImage(skiTile, 9, 100,  2, 1,  12, 35, 2, 1);
-    compCtx.drawImage(skiTile, 27, 100, 6, 10, 10, 36, 6, 19);
-
-    //player 0 left
-    compCtx.drawImage(skiTile, 25, 90, 10, 11, 10, 55, 12, 20);
-    compCtx.drawImage(skiTile, 5,  90, 10, 11, 10, 55, 12, 20);
-
-    //player 0 right
-    compCtx.drawImage(skiTile, 4, 110, 11, 10, 10, 75, 12, 20);
-    compCtx.drawImage(skiTile, 25, 110, 10, 10, 10, 75, 12, 20);
   }
 
   function paintStage(){
