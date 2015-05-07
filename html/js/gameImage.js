@@ -8,7 +8,7 @@ define(["bitmap"],function(Bitmap){
 
   var savedImageSize = {};
   savedImageSize['skititl'] = [8,6];
-  savedImageSize['ski'] = [4,5]
+  savedImageSize['ski'] = [8,10]
   savedImageSize['skisel'] = [2,2];
 
   var tileIndex = {
@@ -32,6 +32,7 @@ define(["bitmap"],function(Bitmap){
       _canvasBuf.height = savedImageSize[i][1] * 40;
 
       if(i === "ski"){ //sprites... ski.dat
+        console.log(_canvasBuf);
         savedImage[i] = preSprites(i+".dat", _canvasBuf, savedImageSize[i]);
       } else {
         savedImage[i] = preDraw(i+".dat", _canvasBuf, savedImageSize[i]);
@@ -111,9 +112,6 @@ define(["bitmap"],function(Bitmap){
           }
 
           ctx.fillRect(k+(x*20), i+(y*20), 1, 1);
-          //var e = Date.now();
-
-          //console.log(j+" "+i+" "+k + ":" + (e-s) + "/"+style);
           bs = style;
         }
       }
@@ -126,6 +124,8 @@ define(["bitmap"],function(Bitmap){
         if(y >= y_lim) break;
       }
     }
+
+    return canvas;
   }
 
   gameImage.prototype.getImage = function(imageName){

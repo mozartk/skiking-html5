@@ -68,8 +68,7 @@ define([], function(){
     for(k=skyLen; k<=_level; k++){
       var arr = new Array();
       for(i=0; i<=31; i++){
-        var result = getProbability(9);
-        if(result > 9) console.log(result);
+        var result = getProbability(5);
         arr.push(result);
       }
       field.push(arr);
@@ -78,7 +77,7 @@ define([], function(){
 
     //나무를 심습니다.
     //level에 따라서 심는 갯수가 달라짐
-    for(k=skyLen; k<=_level; k=k+2){
+    for(k=skyLen; k<=_level; k++){
       for(i=0; i<=31; i++){
         var result = getProbability(50);
         if(result % 50 === 0){
@@ -104,7 +103,7 @@ define([], function(){
         } else if(k === 14) {
           arr.push(getProbability(2)+32);
         } else {
-          arr.push(getProbability(9));
+          arr.push(getProbability(5));
         }
       }
       sky.push(arr);

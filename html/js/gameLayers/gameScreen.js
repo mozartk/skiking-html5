@@ -30,6 +30,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   var bufferCtx  = scrBuffer.getContext('2d');
   bufferCtx.imageSmoothingEnabled = false;
+  window.bufferCtx = bufferCtx;
 
   var gameSprites = {
     'snow':[0,1,2,3,4],
@@ -53,6 +54,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     keyCode = engine.keyCode;
     soundFx = engine.soundFx;
     skiTile  = engine.gameImage.getImage('ski');
+
+    window.skiTile = skiTile;
+
 
     this.init();
   };
@@ -98,12 +102,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       v.forEach(function(vv, kk){
         if(vv>=0 && vv<=9 || vv == 20 || vv == 34) {
           if(vv === 20 || vv == 34) vv = 0;
-          var row = Math.floor(tile[vv]/8);
-          var column = ((tile[vv]/8) - row)*8;
-          var r_row = row * 10;
+          var row = 0;
+          var column = vv;
+          var r_row = row * 20;
           var r_column = column * 20;
-
-          bufferCtx.drawImage(skiTile, r_column+5, r_row+5, 10, 5, kk* 10, k*5, 10, 5);
+          bufferCtx.drawImage(skiTile, r_column+5, r_row+10, 10, 10, kk*10, k*10, 10, 10);
         }
       });
       k++;
@@ -118,7 +121,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       v.forEach(function(vv, kk){
         if(vv == 20){
           //tree
-          bufferCtx.drawImage(skiTile, 104, 10, 11, 10, kk*10, (k*5)-14, 11, 19);
+          bufferCtx.drawImage(skiTile, 100-5, 0, 20, 20, kk*10, k*10, 20, 20);
         } else if(vv >= 30 && vv <= 33){
           //sky, horizon
           var _tile = getTile(vv);
@@ -127,13 +130,13 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           var column = ((_tile/8) - row)*8;
           var r_row = row * 10;
           var r_column = column * 20;
-          bufferCtx.drawImage(skiTile, r_column+5, r_row+5, 10, 5, kk* 10, k*5, 10, 10);
+          //bufferCtx.drawImage(skiTile, r_column+5, r_row+5, 10, 5, kk* 10, k*5, 10, 10);
         } else if(vv == 34){
           //finish line
-          bufferCtx.drawImage(compImg, 5, 5, 10, 4, kk* 10, k*5, 10, 4);
+          //bufferCtx.drawImage(skiTile, 5, 5, 10, 4, kk* 10, k*5, 10, 4);
         } else if(vv == 36){
           if(j==0) {
-            bufferCtx.drawImage(compImg, 10, 10, 40, 20, kk*10, k*5, 40, 20);
+            //bufferCtx.drawImage(skiTile, 10, 10, 40, 20, kk*10, k*5, 40, 20);
             j++;
           }
         }
@@ -146,31 +149,26 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     var spritePos = {
       x : 10,
       y : 35,
-      w : 6,
+      w : 20,
       h : 20,
       cx: (player.currentPosX*10)+3,
       cy: 125,
-      rw: 6,
+      rw: 20,
       rh: 20
     };
 
     switch(player.skiselDirection){
       case 0:
-        spritePos.w = 11;
-        spritePos.rw = 10;
-        spritePos.x = 10;
-        spritePos.y = 55;
+        spritePos.x = 20;
+        spritePos.y = 80;
         break;
       case 2:
-        spritePos.w = 11;
-        spritePos.rw = 10;
-        spritePos.x = 10;
-        spritePos.y = 75;
+        spritePos.x = 60;
+        spritePos.y = 80;
         break;
       case 1:
-        spritePos.w = 6;
-        spritePos.x = 10;
-        spritePos.y = 35;
+        spritePos.x = 40;
+        spritePos.y = 80;
         break;
     }
 
@@ -184,7 +182,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function paintPlayer(){
     var p = playerPosInfo();
-    bufferCtx.drawImage(compImg, p.x, p.y, p.w, p.h, p.cx, p.cy, p.rw, p.rh);
+    bufferCtx.drawImage(skiTile, p.x, p.y, p.w, p.h, p.cx, p.cy, p.rw, p.rh);
   }
 
   //처리 후 한칸 전진
@@ -227,7 +225,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       }
     }
 
-    player.currentPosY += 2;
+    player.currentPosY++;
     if(player.skiselDirection === 0){
       if(player.currentPosX > 0) player.currentPosX--;
     } else if(player.skiselDirection === 2){
