@@ -106,6 +106,10 @@ define(["bitmap"],function(Bitmap){
       for(i=0; i<20; i++){
         for(k=0; k<20; k++) {
           //var s = Date.now();
+          //검은색 이미지는 투명한 이미지
+          if(imageData[j][i][k] === "000000") {
+            continue;
+          }
           var style = "#"+imageData[j][i][k];
           if(bs != style) {
             ctx.fillStyle = style;

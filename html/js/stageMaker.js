@@ -9,6 +9,7 @@ define([], function(){
     34,35 목표지점
 
     36 집
+    38 출발지점
 
 
 
@@ -95,13 +96,13 @@ define([], function(){
 
   function makeSky(){
     var sky = [];
-    for(k=0; k<56; k++){
+    for(k=0; k<23; k++){
       var arr = new Array();
       for(i=0; i<=31; i++){
-        if(k < 14){
+        if(k < 7){
           arr.push(30);
-        } else if(k === 14) {
-          arr.push(getProbability(2)+32);
+        } else if(k === 7) {
+          arr.push(32);
         } else {
           arr.push(getProbability(5));
         }
@@ -110,8 +111,9 @@ define([], function(){
       arr = null;
     }
 
-    //출발지점
-    sky[27][14] = 36;
+    //집
+    sky[9][19] = 36;
+    sky[14][14] = 38;
 
     return sky;
   }
