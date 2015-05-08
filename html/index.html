@@ -6,6 +6,12 @@
   <script>
     require(['skiking'],function(Game){
       new Game();
+
+      document.getElementById("startBtn").addEventListener("click",function(){
+        engine.event.distribute({"type":"keydown"});
+        console.log(engine);
+      }, true);
+
     });
   </script>
   <style>
@@ -22,5 +28,7 @@
 <body>
 <h1>SKI KING</h1>
 <div id="gameDiv" style="border:1px solid blueviolet; height:200px; width:300px;"></div>
+<button type="button" id="startBtn">start</button>
+
 </body>
 </html>

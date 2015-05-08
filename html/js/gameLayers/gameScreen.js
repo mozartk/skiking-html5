@@ -6,8 +6,8 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var soundFx;
 
   var stage, stageLen, skiTile;
-  var gameSpeed = 4;
-  var gameTick = 5;
+  var gameSpeed = 1;
+  var gameTick = 1;
 
   var player = {
     run: false,
@@ -330,10 +330,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
 
     if(this.player.run === true) {
-      gameTick++;
-      if (gameTick % gameSpeed === 0) {
+      //gameTick++;
+      //if (gameTick % gameSpeed === 0) {
         playerFF();
-      }
+      //}
 
       drawGameScreen();
     } else {
