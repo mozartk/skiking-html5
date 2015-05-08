@@ -12,7 +12,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     rh: 240,
     w: 640,  //css로 늘린 보이는 사이즈
     h: 480,
-    frameRate: 30 // per sec
+    frameRate: 60 // per sec
   };
 
   var libLoad = 0;
@@ -27,8 +27,6 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     screenInit();
     this.screenContext.imageSmoothingEnabled = false;
     event.init();
-
-    //this.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"_basic"});//
 
     this.gameImage = new gameImage(dataParse, waitDependent.bind(this));
     this.soundFx   = new soundFx(dataParse.get("skisound.wad"), waitDependent.bind(this));
@@ -141,9 +139,18 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
   }
 
 
-
+  //painter
+  //frame rate code reference::
+  //http://codetheory.in/controlling-the-frame-rate-with-requestanimationframe/
   asdfJSEngine.prototype.painter = {
       engine: undefined,
+      frame: {
+        fps: screenConf.frameRate,
+        now: undefined,
+        then: Date.now(),
+        interval: 1000/screenConf.frameRate,
+        delta:undefined
+      },
       init: function(scope){
         engine.painter.engine = scope;
       },
@@ -159,16 +166,23 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
         engine.painter._redraw = true;
       },
       draw: function(){
-        this.drawHandler = setInterval(function(){
+        requestAnimationFrame(engine.painter.draw);
+        var frame = engine.painter.frame;
+
+        frame.now = Date.now();
+        frame.delta = frame.now - frame.then;
+        if (frame.delta > frame.interval) {
+          frame.then = frame.now - (frame.delta % frame.interval);
+
           //배열을 거꾸로 돌려서 체크해야 하는데 for in은 거꾸로 못돌림... 그래서 한번 더 돌려서 체크함;;
           var idxArr = [];
-          for(var idx in storeLayer){
+          for (var idx in storeLayer) {
             var layerOpt = engine.getLayer(idx).layerOption;
-            if(layerOpt.enabled === false) {
+            if (layerOpt.enabled === false) {
               continue;
             }
 
-            if(layerOpt.visible === false) {
+            if (layerOpt.visible === false) {
               continue;
             }
 
@@ -177,22 +191,17 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
 
           //높은 순서부터 이벤트 체크함
           var len = idxArr.length;
-          //if(len > 0 && engine.painter._redraw === true){
           if(true){
-            //engine.painter.clear.call(this);
             while(len){
               engine.getLayer(idxArr[len-1]).paint(engine.screenContext);
               len--;
             }
-
-            //engine.painter._redraw = false;
           }
-        }, 1000/screenConf.frameRate);
+        }
       }
   };
 
-
-  //event Controll part
+  //event Control part
   var event = {
     init: function(){
       gameCanvas.on(event.list(), event.distribute);
@@ -229,7 +238,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
         len--;
       }
     }
-  }
+  };
 
   return asdfJSEngine;
 });
