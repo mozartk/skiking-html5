@@ -75,6 +75,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   function makeStage(){
     var stageMaker = new StageMaker();
     stage = stageMaker.seed(Date.now()).get(10);
+    window.stage = stage;
     stageLen = stage.length;
 
   }
@@ -100,8 +101,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     for(i=player.currentPosY; i<=len; i++){
       var v = stage[i];
       v.forEach(function(vv, kk){
-        if(vv>=0 && vv<=9 || vv == 20 || vv == 34) {
-          if(vv === 20 || vv == 34) vv = 0;
+        var ovv = vv;
+        if(vv>=0 && vv<=9 || vv == 20 || vv == 34 || vv == 36 || vv == 38) {
+          if(vv === 20 || vv == 34|| vv == 36 || vv == 38) vv = 0;
           var row = 0;
           var column = vv;
           var r_row = row * 20;
@@ -120,24 +122,27 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       var v = stage[i];
       v.forEach(function(vv, kk){
         if(vv == 20){
-          //tree
-          bufferCtx.drawImage(skiTile, 100-5, 0, 20, 20, kk*10, k*10, 20, 20);
-        } else if(vv >= 30 && vv <= 33){
-          //sky, horizon
-          var _tile = getTile(vv);
-
-          var row = Math.floor(_tile/8);
-          var column = ((_tile/8) - row)*8;
-          var r_row = row * 10;
-          var r_column = column * 20;
-          //bufferCtx.drawImage(skiTile, r_column+5, r_row+5, 10, 5, kk* 10, k*5, 10, 10);
+          //tree 나무는 세로로 10px더 길기 때문에 보정해줘야 함
+          bufferCtx.drawImage(skiTile, 100-5, 0, 20, 20, (kk*10)-10, (k*10)-10, 20, 20);
+        } else if(vv == 30){
+          bufferCtx.drawImage(skiTile, 45, 70, 10, 10, kk*10, k*10, 10, 10);
+        } else if(vv == 32){
+          bufferCtx.drawImage(skiTile, 65, 70, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv == 34){
           //finish line
-          //bufferCtx.drawImage(skiTile, 5, 5, 10, 4, kk* 10, k*5, 10, 4);
+          bufferCtx.drawImage(skiTile, 85, 70, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv == 36){
-          if(j==0) {
-            //bufferCtx.drawImage(skiTile, 10, 10, 40, 20, kk*10, k*5, 40, 20);
-            j++;
+            //집
+            bufferCtx.drawImage(skiTile, 124, 40, 11, 20, (kk*10)-1, k*10, 11, 20);
+            bufferCtx.drawImage(skiTile, 145, 40, 10, 20, (kk*10)+10, k*10, 10, 20);
+            bufferCtx.drawImage(skiTile, 5, 60, 10, 20, (kk*10)+20, k*10, 10, 20);
+            bufferCtx.drawImage(skiTile, 25, 60, 11, 20, (kk*10)+30, k*10, 11, 20);
+        } else if(vv == 38){
+          //출발 지점
+          var i = 0;
+          for(;i<=30; i=i+10){
+            bufferCtx.drawImage(skiTile, 5, 90, 10, 10, (kk*10)+i, k*10, 10, 10);
+            bufferCtx.drawImage(skiTile, 145, 70, 10, 10, (kk*10)+i, (k*10)+10, 10, 10);
           }
         }
       });
@@ -146,13 +151,14 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   }
 
   function playerPosInfo(){
+    //162,130
     var spritePos = {
       x : 10,
       y : 35,
       w : 20,
       h : 20,
       cx: (player.currentPosX*10)+3,
-      cy: 125,
+      cy: 130,
       rw: 20,
       rh: 20
     };
@@ -177,12 +183,12 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function currentfloorInfo(num){
     if(typeof num === "undefined") num = 0;
-    return stage[player.currentPosY+30+(num)];
+    return stage[player.currentPosY+15+(num)];
   }
 
   function paintPlayer(){
     var p = playerPosInfo();
-    bufferCtx.drawImage(skiTile, p.x, p.y, p.w, p.h, p.cx, p.cy, p.rw, p.rh);
+    bufferCtx.drawImage(skiTile, p.x, p.y, p.w, p.h, p.cx-(p.rw/2)+2, p.cy, p.rw, p.rh);
   }
 
   //처리 후 한칸 전진
@@ -195,19 +201,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
     if(player.distance === 1){
       soundFx.play("youwillgo");
-    }
-
-    //없을 경우
-    if(false){
-      //이동하면 몸 흔들거리는 flag
-      //스프라이트로 볼 때 이동하면 몸이 흔들거려야 하는데
-      //스프라이트만 있고 실게임에서도 구현 안되어있음.
-      //일단 소스만 남겨둠
-      if(player.distance%4 <= 1){
-        player.state = 1;
-      } else {
-        player.state = 0;
-      }
     }
 
     //살아있으면 기록 +1점
@@ -232,21 +225,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       if(player.currentPosX < 31) player.currentPosX++;
     }
   }
-
-  function getTile(resourceId){
-    switch(resourceId){
-      case 30:
-      case 31:
-        return gameSprites.sky[0];
-        break;
-      case 32:
-      case 33:
-        return gameSprites.horizon[resourceId-32];
-        break;
-    }
-  }
-
-
 
   function startRun(){
     player.run = true;
@@ -330,20 +308,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
 
     if(this.player.run === true) {
-      //gameTick++;
-      //if (gameTick % gameSpeed === 0) {
-        playerFF();
-      //}
-
+      playerFF();
       drawGameScreen();
     } else {
       reDraw = false;
     }
-
-
-
-
-
   }
 
   return gameScreenLayer;

@@ -9,6 +9,7 @@ define([], function(){
     34,35 목표지점
 
     36 집
+    38 출발지점
 
 
 
@@ -18,25 +19,12 @@ define([], function(){
 
   var timeStamp, tempStamp;
 
-  var field = [];
-
-  var tile = {
-    'snow':[0,1,2,3,8,9,16,17,24,25],
-    'snowTrail':[0,1,2,3,8,9,16,17,24,25],
-    'tree':[13],
-    'sky':[52],
-    'horizon':[60, 61],
-    'endLine': [38,39], //두개를 위아래로 겹쳐서 4줄로 그려야 함(명암, 실제로는 2줄)
-    'startfloor': [64, 65],
-    'startbottom': [62, 63]
-  }
-
   function stageMaker(){
 
   }
 
-  stageMaker.prototype.seed = function(timeStamp){
-    tempStamp = timeStamp = timeStamp;
+  stageMaker.prototype.seed = function(_timeStamp){
+    tempStamp = timeStamp = _timeStamp;
 
     return this;
   }
@@ -48,7 +36,7 @@ define([], function(){
   //getProbability
   function getProbability(range){
     if(typeof range === "undefined") range = 100;
-    return randResult = getRand(tempStamp++) % range;
+    return getRand(tempStamp++) % range;
   }
 
   function getRand(seed){
@@ -59,6 +47,7 @@ define([], function(){
     //field = [];
     var i = 0, k = 0;
     var _level = (level*2) + 250;//지형
+    var _level = (level)+200;
 
     var field = makeSky();
     var skyLen = (field.length-1);
@@ -95,13 +84,13 @@ define([], function(){
 
   function makeSky(){
     var sky = [];
-    for(k=0; k<56; k++){
+    for(k=0; k<23; k++){
       var arr = new Array();
       for(i=0; i<=31; i++){
-        if(k < 14){
+        if(k < 7){
           arr.push(30);
-        } else if(k === 14) {
-          arr.push(getProbability(2)+32);
+        } else if(k === 7) {
+          arr.push(32);
         } else {
           arr.push(getProbability(5));
         }
@@ -110,8 +99,9 @@ define([], function(){
       arr = null;
     }
 
-    //출발지점
-    sky[27][14] = 36;
+    //집
+    sky[9][19] = 36;
+    sky[14][14] = 38;
 
     return sky;
   }
@@ -128,9 +118,9 @@ define([], function(){
     lineBuffer.height = 20;
 
     for(i=0; i<=31; i++){
-      field[endline-1][i] = getProbability(9);
+      field[endline-1][i] = getProbability(5);
       field[endline][i] = 34;
-      field[endline-1][i] = getProbability(9);
+      field[endline-1][i] = getProbability(5);
     }
 
     return field;
