@@ -19,7 +19,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     currentPosY: 0,     //0~1
     alive: true,        //0alive 1dead
     distance: 0,        //0~~
-    endLineStop: 20,    //통화 후 20칸 움직임
+    triggerStop: 20,    //통화 후 20칸 움직임
     clear: false        //
   };
 
@@ -89,7 +89,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     player['currentPosY'] =  0;//0~1
     player['alive'] =  true; //0alive 1dead
     player['distance'] =  0; //0~~
-    player['endLineStop'] =  20//통화 후 20칸 움직임
+    player['triggerStop'] =  20//이벤트 후 20칸 움직임
     player['clear'] =  false; //
   }
 
@@ -101,7 +101,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     for(i=player.currentPosY; i<=len; i++){
       var v = stage[i];
       v.forEach(function(vv, kk){
-        var ovv = vv;
         if(vv>=0 && vv<=9 || vv == 20 || vv == 34 || vv == 36 || vv == 38) {
           if(vv === 20 || vv == 34|| vv == 36 || vv == 38) vv = 0;
           var row = 0;
@@ -116,7 +115,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   };
 
   function paintMaterial(ctx){
-    var k = 0, i, j = 0;
+    var k = 0, i;
     var len = player.currentPosY+50; //플레이어로부터 30칸 밑으로 더그
     for(i=player.currentPosY; i<len; i++){
       var v = stage[i];
@@ -163,19 +162,29 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       rh: 20
     };
 
-    switch(player.skiselDirection){
-      case 0:
-        spritePos.x = 20;
-        spritePos.y = 80;
-        break;
-      case 2:
-        spritePos.x = 60;
-        spritePos.y = 80;
-        break;
-      case 1:
-        spritePos.x = 40;
-        spritePos.y = 80;
-        break;
+    if(player.alive === true){
+      switch(player.skiselDirection){
+        case 0:
+          spritePos.x = 20;
+          spritePos.y = 80;
+          break;
+        case 2:
+          spritePos.x = 60;
+          spritePos.y = 80;
+          break;
+        case 1:
+          spritePos.x = 40;
+          spritePos.y = 80;
+          break;
+      }
+    } else {
+      //죽었을 때.
+      //스프라이트가 2개라 1/2확률로 각각의 이미지 출력함
+      spritePos.x = 80;
+      spritePos.y = 80;
+      if(Math.floor(((Math.random() * 2))) === 1){
+        spritePos.x += 20;
+      }
     }
 
     return spritePos;
@@ -194,9 +203,22 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   //처리 후 한칸 전진
   function playerFF(){
     var line = currentfloorInfo();
+
     if(line[0] == 34){
       soundFx.play("clap");
       player.clear = true;
+    }
+
+    //나무 충돌
+    if(line[player.currentPosX] === 20){
+      player.alive = false;
+    }
+
+    //죽은 상태일 때 사운드 출력
+    if(player.alive === false){
+      var chance = Math.floor(((Math.random() * 4)));
+      var failSound = ["oops", "oh", "ooch", "wow"];
+      soundFx.play(failSound[chance]);
     }
 
     if(player.distance === 1){
@@ -211,9 +233,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
 
     //결승전 통과하면 20칸 이동 후 이동 종료
-    if(player.clear === true){
-      player.endLineStop--;
-      if(player.endLineStop <= 0){
+    if(player.clear === true || player.alive === false){
+      player.triggerStop--;
+      if(player.triggerStop <= 0){
         player.run = false;
       }
     }
@@ -257,7 +279,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
         case keyCode.VK_DOWN:
         case keyCode.VK_LEFT:
         case keyCode.VK_RIGHT:
-          if(this.player.endLineStop === 0){
+          if(this.player.triggerStop === 0){
             return false;
           }
           break;
@@ -299,20 +321,16 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   };
 
   gameScreenLayer.prototype.paint = function(ctx){
-    if(reDraw === true){
+    if(player.run === true) {
+      playerFF();
+      drawGameScreen();
+
       paintStage();
       paintMaterial();
       paintPlayer();
-
-      ctx.drawImage(scrBuffer, 0, 0);
     }
 
-    if(this.player.run === true) {
-      playerFF();
-      drawGameScreen();
-    } else {
-      reDraw = false;
-    }
+    ctx.drawImage(scrBuffer, 0, 0);
   }
 
   return gameScreenLayer;

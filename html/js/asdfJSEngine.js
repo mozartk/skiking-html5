@@ -12,7 +12,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     rh: 240,
     w: 640,  //css로 늘린 보이는 사이즈
     h: 480,
-    frameRate: 15 // per sec
+    frameRate: 5 // per sec
   };
 
   var libLoad = 0;
