@@ -32,7 +32,6 @@ define(["bitmap"],function(Bitmap){
       _canvasBuf.height = savedImageSize[i][1] * 40;
 
       if(i === "ski"){ //sprites... ski.dat
-        console.log(_canvasBuf);
         savedImage[i] = preSprites(i+".dat", _canvasBuf, savedImageSize[i]);
       } else {
         savedImage[i] = preDraw(i+".dat", _canvasBuf, savedImageSize[i]);

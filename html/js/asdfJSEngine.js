@@ -191,6 +191,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
 
           //높은 순서부터 이벤트 체크함
           var len = idxArr.length;
+          //engine.screenContext.clearRect(0,0,320,240);
           if(true){
             while(len){
               engine.getLayer(idxArr[len-1]).paint(engine.screenContext);

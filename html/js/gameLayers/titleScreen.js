@@ -20,7 +20,7 @@ define(["jquery", "underscore"],  function($, _){
   }
 
   function drawTitleScreen(){
-    reDraw = true;
+    soundFx.play("titleskiking");
   }
 
   function goToGame(){
@@ -40,12 +40,7 @@ define(["jquery", "underscore"],  function($, _){
   };
 
   titleScreenLayer.prototype.paint = function(ctx){
-    if(reDraw === true){
-      ctx.drawImage(titleScreen, 0, 0);
-      soundFx.play("titleskiking");
-    }
-
-    reDraw = false;
+    ctx.drawImage(titleScreen, 0, 0);
   }
 
   return titleScreenLayer;

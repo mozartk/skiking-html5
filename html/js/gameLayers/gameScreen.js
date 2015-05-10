@@ -24,6 +24,13 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     clear: false        //
   };
 
+  var gameConf = {
+    x_min : 0,
+    x_max : 31,
+    y_min : 0,
+    y_max : 23
+  }
+
 
   var scrBuffer = document.createElement('canvas');
   scrBuffer.width = engine.screenConf.rw;
@@ -32,15 +39,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var bufferCtx  = scrBuffer.getContext('2d');
   bufferCtx.imageSmoothingEnabled = false;
   window.bufferCtx = bufferCtx;
-
-  var gameSprites = {
-    'snow':[0,1,2,3,4],
-    'snowTrail':[0,1,2,3,8,9,16,17,24,25],
-    'tree':[13],
-    'sky':[52],
-    'horizon':[60,61],
-    'endLine': [38,39] //두개를 위아래로 겹쳐서 4줄로 그려야 함(명암, 실제로는 2줄)
-  };
 
   var keyCode;
 
@@ -93,7 +91,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     var k = 0;
     var i = player.currentPosY;
     var len = player.currentPosY+50;
-    var tile = gameSprites.snow;
     for(i=player.currentPosY; i<=len; i++){
       var v = stage[i];
       v.forEach(function(vv, kk){
@@ -110,7 +107,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     };
   };
 
-  function paintMaterial(ctx){
+  function paintMaterial(){
     var k = 0, i;
     var len = player.currentPosY+50; //플레이어로부터 30칸 밑으로 더그
     for(i=player.currentPosY; i<len; i++){
@@ -118,33 +115,33 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       v.forEach(function(vv, kk){
         if(vv == 20){
           //tree 나무는 세로로 10px더 길기 때문에 보정해줘야 함
-          bufferCtx.drawImage(skiTile, 100-5, 0, 20, 20, (kk*10)-10, (k*10)-10, 20, 20);
+          bufferCtx.drawImage(skiTile, -5, 20, 20, 20, (kk*10)-10, (k*10)-10, 20, 20);
         } else if(vv == 30){
-          bufferCtx.drawImage(skiTile, 45, 70, 10, 10, kk*10, k*10, 10, 10);
+          bufferCtx.drawImage(skiTile, 185, 10, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv == 32){
-          bufferCtx.drawImage(skiTile, 65, 70, 10, 10, kk*10, k*10, 10, 10);
+          bufferCtx.drawImage(skiTile, 165, 10, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv == 34){
           //finish line
-          bufferCtx.drawImage(skiTile, 85, 70, 10, 10, kk*10, k*10, 10, 10);
+          bufferCtx.drawImage(skiTile, 145, 10, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv == 36){
             //집
-            bufferCtx.drawImage(skiTile, 124, 40, 11, 20, (kk*10)-1, k*10, 11, 20);
-            bufferCtx.drawImage(skiTile, 145, 40, 10, 20, (kk*10)+10, k*10, 10, 20);
-            bufferCtx.drawImage(skiTile, 5, 60, 10, 20, (kk*10)+20, k*10, 10, 20);
-            bufferCtx.drawImage(skiTile, 25, 60, 11, 20, (kk*10)+30, k*10, 11, 20);
+            bufferCtx.drawImage(skiTile, 4, 40, 11, 20, (kk*10)-1, k*10, 11, 20);
+            bufferCtx.drawImage(skiTile, 25, 40, 10, 20, (kk*10)+10, k*10, 10, 20);
+            bufferCtx.drawImage(skiTile, 45, 40, 10, 20, (kk*10)+20, k*10, 10, 20);
+            bufferCtx.drawImage(skiTile, 65, 40, 11, 20, (kk*10)+30, k*10, 11, 20);
         } else if(vv == 38){
           //출발 지점
           var i = 0;
           for(;i<=30; i=i+10){
-            bufferCtx.drawImage(skiTile, 5, 90, 10, 10, (kk*10)+i, k*10, 10, 10);
-            bufferCtx.drawImage(skiTile, 145, 70, 10, 10, (kk*10)+i, (k*10)+10, 10, 10);
+            bufferCtx.drawImage(skiTile, 105, 50, 10, 10, (kk*10)+i, k*10, 10, 10);
+            bufferCtx.drawImage(skiTile, 85, 50, 10, 10, (kk*10)+i, (k*10)+10, 10, 10);
           }
         } else if(vv >= 40 && vv <= 42) {
-          var spPos = 45+(20*(vv-40)); //결과는  0,1,2
-          bufferCtx.drawImage(skiTile, spPos, 30, 10, 10, kk*10, k * 10, 10, 10);
+          var spPos = 145+(20*(vv-40)); //결과는  0,1,2
+          bufferCtx.drawImage(skiTile, spPos, 70, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv >= 43 && vv <= 44) {
           var spPos = 105+(20*(vv-43)); //결과는  0,1
-          bufferCtx.drawImage(skiTile, spPos, 68, 10, 12, kk*10, (k*10)-2, 10, 12);
+          bufferCtx.drawImage(skiTile, spPos, 8, 10, 12, kk*10, (k*10)-2, 10, 12);
         }
       });
       k++;
@@ -167,33 +164,33 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     if(player.alive === true){
       switch(player.skiselDirection){
         case 0:
-          spritePos.x = 20;
-          spritePos.y = 80;
-          break;
-        case 2:
-          spritePos.x = 60;
-          spritePos.y = 80;
+          spritePos.x = 0;
+          spritePos.y = 60;
           break;
         case 1:
+          spritePos.x = 20;
+          spritePos.y = 60;
+          break;
+        case 2:
           spritePos.x = 40;
-          spritePos.y = 80;
+          spritePos.y = 60;
           break;
       }
 
       if(player.triggerStop <= 0){
-        spritePos.x = 140;
-        spritePos.y = 80;
+        spritePos.x = 120;
+        spritePos.y = 60;
       }
     } else {
       //죽어서 뒹굴거리는게 끝나면
       if(player.triggerStop <= 0){
-        spritePos.x = 120;
-        spritePos.y = 80;
+        spritePos.x = 100;
+        spritePos.y = 60;
       } else {
         //죽었을 때.
         //스프라이트가 2개라 1/2확률로 각각의 이미지 출력함
-        spritePos.x = 80;
-        spritePos.y = 80;
+        spritePos.x = 60;
+        spritePos.y = 60;
         if(rand(2) === 1){
           spritePos.x += 20;
         }
@@ -213,16 +210,51 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     bufferCtx.drawImage(skiTile, p.x, p.y, p.w, p.h, p.cx-(p.rw/2)+2, p.cy, p.rw, p.rh);
   }
 
+
+  //방향을 고려한 현재 포지션
+  function curDirPos(){
+    var curResult;
+    var dir = player.skiselDirection;
+    var pos = player.currentPosX;
+    switch(dir){
+      case 0: //left
+        if(pos > gameConf.x_min){
+          curResult = pos-1;
+        } else {
+          curResult = gameConf.x_min;
+        }
+        break;
+      case 2: //right
+        if(pos < gameConf.x_max){
+          curResult = pos+1;
+        } else {
+          curResult = gameConf.x_max;
+        }
+        break;
+      default:
+        curResult = pos;
+        break;
+    }
+
+    return curResult;
+  }
+
   //처리 후 한칸 전진
   function playerFF() {
+    if(player.run === false){
+      return;
+    }
     var line = currentfloorInfo();
+
+    //종료지점 통과했을 때.
     if (line[0] == 34) {
       soundFx.play("clap");
       player.clear = true;
     }
 
-    //나무 충돌
-    if (line[player.currentPosX] === 20) {
+    //나무 충돌 시 판정
+    var Pos = curDirPos();
+    if (line[Pos] === 20) {
       player.alive = false;
     }
 
@@ -233,6 +265,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       soundFx.play(failSound[chance]);
     }
 
+    //게임 진행 시 처음에 항상 특정 코멘트가 나오는걸 구현
     if (player.distance === 1) {
       soundFx.play("youwillgo");
     }
@@ -252,38 +285,36 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       }
     }
 
-
     //한칸 전진 플로우
     player.currentPosY++
-
     //방향을 틀어도 바로 움직이는게 아니라 두번째 이동부터 움직이기 때문에
     //이전 방향과 지금 방향을 비교해서 두번째 이동인지 체크하기 위해 사용
     var dirResult = player.lastDirection == player.skiselDirection;
+
+    switch(player.skiselDirection){
+      case 0:
+        if (player.currentPosX > gameConf.x_min && dirResult) {
+          player.currentPosX--;
+        }
+        break;
+
+      case 1:
+        break;
+
+      case 2:
+        if (player.currentPosX < gameConf.x_max && dirResult) {
+          player.currentPosX++;
+        }
+        break;
+    }
+
     if (player.alive === true) {
-      switch(player.skiselDirection){
-        case 0:
-          if (player.currentPosX > 0 && dirResult) {
-            player.currentPosX--;
-          }
-          break;
-
-        case 1:
-          break;
-
-        case 2:
-          if (player.currentPosX < 31 && dirResult) {
-            player.currentPosX++;
-          }
-          break;
-      }
-
-      if(player.distance > 2 && stage[player.currentPosY+13][player.currentPosX] < 30){
-        stage[player.currentPosY+13][player.currentPosX] = 40+player.skiselDirection;
+      if(player.distance > 2 && stage[player.currentPosY+14][player.currentPosX] < 30){
+        stage[player.currentPosY+14][player.currentPosX] = 40+player.skiselDirection;
       }
     } else {
-      if(player.distance > 2 && stage[player.currentPosY+13][player.currentPosX] < 30){
-        stage[player.currentPosY+13][player.currentPosX] = 43+rand(2);
-        console.log(stage[player.currentPosY+13])
+      if(player.distance > 2 && stage[player.currentPosY+14][player.currentPosX] < 30){
+        stage[player.currentPosY+14][player.currentPosX] = 43+rand(2);
       }
     }
 
@@ -315,6 +346,31 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     return Math.floor(((Math.random() * max)))
   }
 
+  function setDirection(key){
+    if(player.alive === true){
+      switch(key){
+        case keyCode.VK_DOWN:
+          player.skiselDirection = 1;
+          break;
+
+        case keyCode.VK_LEFT:
+          console.log(player.skiselDirection)
+          if(player.skiselDirection !== 0) {
+            player.skiselDirection = 0;
+            soundFx.play("whee");
+          }
+          break;
+
+        case keyCode.VK_RIGHT:
+          if(player.skiselDirection !== 2) {
+            player.skiselDirection = 2;
+            soundFx.play("whoo");
+            break;
+          }
+      }
+    }
+  }
+
 
   //event 처리 부분
   //true를 리턴하면 키를 여기서 먹도록 처리
@@ -332,24 +388,8 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           break;
       }
 
-
-
+      setDirection(e.keyCode);
       switch (e.keyCode) {
-        case keyCode.VK_DOWN:
-            this.player.skiselDirection = 1;
-          break;
-        case keyCode.VK_LEFT:
-          if(this.player.skiselDirection !== 0){
-
-          }
-          this.player.skiselDirection = 0;
-          break;
-        case keyCode.VK_RIGHT:
-          if(this.player.skiselDirection !== 2){
-            soundFx.play("whoo");
-          }
-          this.player.skiselDirection = 2;
-          break;
         case keyCode.VK_SPACE:
           stopRun();
           break;
@@ -367,13 +407,12 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   };
 
   gameScreenLayer.prototype.paint = function(ctx){
-    if(player.run === true) {
-      playerFF(); //게임 정보 업데이트
+    playerFF(); //게임 정보 업데이트
 
-      paintStage(); // 결과 처리
-      paintMaterial();
-      paintPlayer();
-    }
+    paintStage(); // 결과 처리
+    paintMaterial();
+    paintPlayer();
+
 
     ctx.drawImage(scrBuffer, 0, 0);
   }
