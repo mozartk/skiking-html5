@@ -152,7 +152,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           bufferCtx.drawImage(skiTile, spPos, 70, 10, 10, kk*10, (k*10), 10, 10);
         } else if(vv >= 43 && vv <= 44) {
           var spPos = 105+(20*(vv-43)); //결과는  0,1
-          bufferCtx.drawImage(skiTile, spPos, 0, 10, 20, kk*10, (k*10), 10, 20);
+          bufferCtx.drawImage(skiTile, spPos, 0, 10, 20, kk*10, (k*10)-10, 10, 20);
         }
       });
       k++;
@@ -254,13 +254,13 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     return pos;
   }
 
-  //처리 후 한칸 전진
+  //한칸 전진 후 처리
   function playerFF() {
     if(player.run !== true) {
       return;
     }
     var lastX = player.currentPosX;
-    var lastY = player.currentPosY+1;
+    var lastY = player.currentPosY;
     //한칸 전진 플로우
     player.currentPosY++;
     //방향을 틀어도 바로 움직이는게 아니라 두번째 이동부터 움직이기 때문에
@@ -285,11 +285,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
 
     if (player.alive === true) {
-      if (player.distance > 1 && stage[lastY+13][lastX] < 30) {
-        stage[lastY+13][lastX] = 40 + player.lastDirection;
+      if (player.distance > 1 && stage[lastY+14][lastX] < 30) {
+        stage[lastY+14][lastX] = 40 + player.lastDirection;
       }
     } else {
-      stage[lastY+13][lastX] = 43 + rand(2);
+      stage[lastY+14][lastX] = 43 + rand(2);
     }
     player.lastDirection = player.skiselDirection;
 
