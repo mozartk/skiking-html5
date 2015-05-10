@@ -92,6 +92,19 @@ define(["underscore"],function(_){
       imageArr = new Array();
     }
 
+    //게임 스프라이트 효율적으로 가져오기 위해서 파싱된 이미지 재배치
+    //스키, 보드 등의 자국
+    for(i=39;i<=60; i=i+7){
+      for(k=0; k<3; k++){
+        imageTotal.splice(i,0,imageTotal.splice(10, 1)[0]);
+      }
+    }
+
+    //눈바닥 이미지 재정리
+    for(i=14; i<=18; i++) {
+      imageTotal.splice(5, 0, imageTotal.splice(i, 1)[0]);
+    }
+
     return imageTotal;
   }
 
