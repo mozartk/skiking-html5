@@ -98,6 +98,7 @@ define(["bitmap"],function(Bitmap){
 
     var bs = "";
     var style = "";
+    var cut = [10,5,6,10,10,10,10,7];
 
     var ctx = canvas.getContext('2d');
 
@@ -121,11 +122,9 @@ define(["bitmap"],function(Bitmap){
       }
 
       x++;
-      if(x >= x_lim){
+      if(cut[y] === x) {
         x=0;
-        console.log('a');
         y++;
-        if(y >= y_lim) break;
       }
     }
 
