@@ -9,9 +9,11 @@
 
       document.getElementById("startBtn").addEventListener("click",function(){
         engine.event.distribute({"type":"keydown"});
-        console.log(engine);
       }, true);
 
+      setTimeout(function(){
+        document.getElementById("gameCanvas").focus();
+      },1000);
     });
   </script>
   <style>

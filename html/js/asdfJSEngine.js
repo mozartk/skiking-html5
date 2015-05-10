@@ -5,6 +5,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
   var storeLayer = [];
   var gameDiv = $("#gameDiv");
   var gameCanvas = $("#gameCanvas");
+  var bufferCanvas = document.createElement("canvas");
   var dataParse;
 
   var screenConf = {
@@ -12,7 +13,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     rh: 240,
     w: 640,  //css로 늘린 보이는 사이즈
     h: 480,
-    frameRate: 5 // per sec
+    frameRate: 15 // per sec
   };
 
   var libLoad = 0;
@@ -87,6 +88,10 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
       gameCanvas = $("#gameCanvas");
     }
 
+    bufferCanvas.width = screenConf.rw;
+    bufferCanvas.height = screenConf.rh;
+    bufferCanvas.imageSmoothingEnabled = false;
+
     gameDiv.css({
       "width": screenConf.w + "px",
       "height": screenConf.h + "px",
@@ -103,6 +108,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     });
 
     asdfJSEngine.prototype.screenContext = gameCanvas[0].getContext("2d");
+    asdfJSEngine.prototype.bufferContext = bufferCanvas.getContext("2d");
   }
 
   asdfJSEngine.prototype.getLayer = function(){
@@ -191,13 +197,14 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
 
           //높은 순서부터 이벤트 체크함
           var len = idxArr.length;
-          //engine.screenContext.clearRect(0,0,320,240);
+          engine.bufferContext.clearRect(0,0,320,240);
           if(true){
             while(len){
-              engine.getLayer(idxArr[len-1]).paint(engine.screenContext);
+              engine.getLayer(idxArr[len-1]).paint(engine.bufferContext);
               len--;
             }
           }
+          engine.screenContext.drawImage(bufferCanvas, 0, 0, 320, 240);
         }
       }
   };

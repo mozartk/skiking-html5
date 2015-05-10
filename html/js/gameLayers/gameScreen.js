@@ -24,6 +24,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     clear: false        //
   };
 
+  window.player = player;
+
+
   var gameConf = {
     x_min : 0,
     x_max : 31,
@@ -138,10 +141,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           }
         } else if(vv >= 40 && vv <= 42) {
           var spPos = 145+(20*(vv-40)); //결과는  0,1,2
-          bufferCtx.drawImage(skiTile, spPos, 70, 10, 10, kk*10, k*10, 10, 10);
+          bufferCtx.drawImage(skiTile, spPos, 70, 10, 20, kk*10, k*10+10, 10, 20);
         } else if(vv >= 43 && vv <= 44) {
           var spPos = 105+(20*(vv-43)); //결과는  0,1
-          bufferCtx.drawImage(skiTile, spPos, 8, 10, 12, kk*10, (k*10)-2, 10, 12);
+          bufferCtx.drawImage(skiTile, spPos, 0, 10, 20, kk*10, (k*10), 10, 20);
         }
       });
       k++;
@@ -202,7 +205,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function currentfloorInfo(num){
     if(typeof num === "undefined") num = 0;
-    return stage[player.currentPosY+15+(num)];
+    return stage[player.currentPosY+14+(num)];
   }
 
   function paintPlayer(){
@@ -236,14 +239,50 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
         break;
     }
 
-    return curResult;
+    return pos;
   }
 
   //처리 후 한칸 전진
   function playerFF() {
-    if(player.run === false){
+    if(player.run !== true) {
       return;
     }
+    var lastX = player.currentPosX;
+    var lastY = player.currentPosY;
+    //한칸 전진 플로우
+    player.currentPosY++
+    //방향을 틀어도 바로 움직이는게 아니라 두번째 이동부터 움직이기 때문에
+    //이전 방향과 지금 방향을 비교해서 두번째 이동인지 체크하기 위해 사용
+    var dirResult = player.lastDirection == player.skiselDirection;
+
+    switch (player.skiselDirection) {
+      case 0:
+        if (player.currentPosX > gameConf.x_min && dirResult) {
+          player.currentPosX--;
+        }
+        break;
+
+      case 1:
+        break;
+
+      case 2:
+        if (player.currentPosX < gameConf.x_max && dirResult) {
+          player.currentPosX++;
+        }
+        break;
+    }
+
+    if (player.alive === true) {
+      if (player.distance > 1 && stage[player.currentPosY + 13][player.currentPosX] < 30) {
+        stage[lastY+13][lastX] = 40 + player.lastDirection;
+      }
+    } else {
+      stage[lastY+13][lastX] = 43 + rand(2);
+    }
+    player.lastDirection = player.skiselDirection;
+
+
+    //현재 서 있는 라인 정보 얻음
     var line = currentfloorInfo();
 
     //종료지점 통과했을 때.
@@ -284,42 +323,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
         player.run = false;
       }
     }
-
-    //한칸 전진 플로우
-    player.currentPosY++
-    //방향을 틀어도 바로 움직이는게 아니라 두번째 이동부터 움직이기 때문에
-    //이전 방향과 지금 방향을 비교해서 두번째 이동인지 체크하기 위해 사용
-    var dirResult = player.lastDirection == player.skiselDirection;
-
-    switch(player.skiselDirection){
-      case 0:
-        if (player.currentPosX > gameConf.x_min && dirResult) {
-          player.currentPosX--;
-        }
-        break;
-
-      case 1:
-        break;
-
-      case 2:
-        if (player.currentPosX < gameConf.x_max && dirResult) {
-          player.currentPosX++;
-        }
-        break;
-    }
-
-    if (player.alive === true) {
-      if(player.distance > 2 && stage[player.currentPosY+14][player.currentPosX] < 30){
-        stage[player.currentPosY+14][player.currentPosX] = 40+player.skiselDirection;
-      }
-    } else {
-      if(player.distance > 2 && stage[player.currentPosY+14][player.currentPosX] < 30){
-        stage[player.currentPosY+14][player.currentPosX] = 43+rand(2);
-      }
-    }
-
-
-    player.lastDirection = player.skiselDirection;
   }
 
   function startRun(){
@@ -354,7 +357,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           break;
 
         case keyCode.VK_LEFT:
-          console.log(player.skiselDirection)
           if(player.skiselDirection !== 0) {
             player.skiselDirection = 0;
             soundFx.play("whee");
