@@ -11,7 +11,10 @@ define([], function(){
     36 집
     38 출발지점
 
-
+    40,41,42 -> ski trail
+    43,44 -> ski fail trail
+    43,44,45 -> board trail
+    43,44,45 -> board trail
 
 
 
