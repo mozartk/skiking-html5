@@ -70,7 +70,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   function makeStage(){
     var stageMaker = new StageMaker();
-    stage = stageMaker.seed(Date.now()).get(10);
+    stage = stageMaker.seed(Date.now()).get(30);
     window.stage = stage;
     stageLen = stage.length;
 
@@ -111,9 +111,15 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   };
 
   function paintMaterial(){
-    var k = 0, i;
-    var len = player.currentPosY+50; //플레이어로부터 30칸 밑으로 더그
-    for(i=player.currentPosY; i<len; i++){
+    var y = player.currentPosY;
+    var k=0, i;
+    if(y > 0) {
+      y-=1;
+      k=-1;
+    }
+
+    var len = player.currentPosY+30; //플레이어로부터 30칸 밑으로 더그
+    for(i=y; i<len; i++){
       var v = stage[i];
       v.forEach(function(vv, kk){
         if(vv == 20){
@@ -128,20 +134,22 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           bufferCtx.drawImage(skiTile, 145, 10, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv == 36){
             //집
-            bufferCtx.drawImage(skiTile, 4, 40, 11, 20, (kk*10)-1, k*10, 11, 20);
-            bufferCtx.drawImage(skiTile, 25, 40, 10, 20, (kk*10)+10, k*10, 10, 20);
-            bufferCtx.drawImage(skiTile, 45, 40, 10, 20, (kk*10)+20, k*10, 10, 20);
-            bufferCtx.drawImage(skiTile, 65, 40, 11, 20, (kk*10)+30, k*10, 11, 20);
+            bufferCtx.drawImage(skiTile, 4, 40, 11, 20, (kk*10)-1, (k*10)-10, 11, 20);
+            bufferCtx.drawImage(skiTile, 25, 40, 10, 20, (kk*10)+10, (k*10)-10, 10, 20);
+            bufferCtx.drawImage(skiTile, 45, 40, 10, 20, (kk*10)+20, (k*10)-10, 10, 20);
+            bufferCtx.drawImage(skiTile, 65, 40, 11, 20, (kk*10)+30, (k*10)-10, 11, 20);
         } else if(vv == 38){
           //출발 지점
           var i = 0;
           for(;i<=30; i=i+10){
-            bufferCtx.drawImage(skiTile, 105, 50, 10, 10, (kk*10)+i, k*10, 10, 10);
-            bufferCtx.drawImage(skiTile, 85, 50, 10, 10, (kk*10)+i, (k*10)+10, 10, 10);
+            bufferCtx.drawImage(skiTile, 105, 50, 10, 10, (kk*10)+i, k*10-10, 10, 10);
+            bufferCtx.drawImage(skiTile, 85, 50, 10, 10, (kk*10)+i, (k*10), 10, 10);
           }
-        } else if(vv >= 40 && vv <= 42) {
+        }
+
+        if(vv >= 40 && vv <= 42) {
           var spPos = 145+(20*(vv-40)); //결과는  0,1,2
-          bufferCtx.drawImage(skiTile, spPos, 70, 10, 20, kk*10, k*10+10, 10, 20);
+          bufferCtx.drawImage(skiTile, spPos, 70, 10, 10, kk*10, (k*10), 10, 10);
         } else if(vv >= 43 && vv <= 44) {
           var spPos = 105+(20*(vv-43)); //결과는  0,1
           bufferCtx.drawImage(skiTile, spPos, 0, 10, 20, kk*10, (k*10), 10, 20);
@@ -208,6 +216,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     return stage[player.currentPosY+14+(num)];
   }
 
+  window.getCur = function(num){
+    return currentfloorInfo(num);
+  }
+
   function paintPlayer(){
     var p = playerPosInfo();
     bufferCtx.drawImage(skiTile, p.x, p.y, p.w, p.h, p.cx-(p.rw/2)+2, p.cy, p.rw, p.rh);
@@ -219,25 +231,25 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     var curResult;
     var dir = player.skiselDirection;
     var pos = player.currentPosX;
-    switch(dir){
-      case 0: //left
-        if(pos > gameConf.x_min){
-          curResult = pos-1;
-        } else {
-          curResult = gameConf.x_min;
-        }
-        break;
-      case 2: //right
-        if(pos < gameConf.x_max){
-          curResult = pos+1;
-        } else {
-          curResult = gameConf.x_max;
-        }
-        break;
-      default:
-        curResult = pos;
-        break;
-    }
+    //switch(dir){
+    //  case 0: //left
+    //    if(pos > gameConf.x_min){
+    //      curResult = pos-1;
+    //    } else {
+    //      curResult = gameConf.x_min;
+    //    }
+    //    break;
+    //  case 2: //right
+    //    if(pos < gameConf.x_max){
+    //      curResult = pos+1;
+    //    } else {
+    //      curResult = gameConf.x_max;
+    //    }
+    //    break;
+    //  default:
+    //    curResult = pos;
+    //    break;
+    //}
 
     return pos;
   }
@@ -248,9 +260,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       return;
     }
     var lastX = player.currentPosX;
-    var lastY = player.currentPosY;
+    var lastY = player.currentPosY+1;
     //한칸 전진 플로우
-    player.currentPosY++
+    player.currentPosY++;
     //방향을 틀어도 바로 움직이는게 아니라 두번째 이동부터 움직이기 때문에
     //이전 방향과 지금 방향을 비교해서 두번째 이동인지 체크하기 위해 사용
     var dirResult = player.lastDirection == player.skiselDirection;
@@ -273,7 +285,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
 
     if (player.alive === true) {
-      if (player.distance > 1 && stage[player.currentPosY + 13][player.currentPosX] < 30) {
+      if (player.distance > 1 && stage[lastY+13][lastX] < 30) {
         stage[lastY+13][lastX] = 40 + player.lastDirection;
       }
     } else {
@@ -281,12 +293,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
     player.lastDirection = player.skiselDirection;
 
-
     //현재 서 있는 라인 정보 얻음
     var line = currentfloorInfo();
 
     //종료지점 통과했을 때.
-    if (line[0] == 34) {
+    if (line[0] == 34 && player.alive === true) {
       soundFx.play("clap");
       player.clear = true;
     }
@@ -400,6 +411,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           break;
       }
 
+      //playerFF();
+      //reDraw = true;
+
       if(player.run !== true && player.clear !== true){
         startRun();
       }
@@ -416,7 +430,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     paintPlayer();
 
 
-    ctx.drawImage(scrBuffer, 0, 0);
+    //if(reDraw == true){
+      ctx.drawImage(scrBuffer, 0, 0);
+    //  reDraw = false;
+    //}
   }
 
   return gameScreenLayer;
