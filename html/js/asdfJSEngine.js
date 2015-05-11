@@ -17,7 +17,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
   };
 
   var libLoad = 0;
-  var libLoadState = 2;
+  var maxLibLoad = 2;
   var engine;
 
   function asdfJSEngine(inst_dataParse){
@@ -35,7 +35,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
 
   function waitDependent(engine){
     libLoad++;
-    if(libLoadState >= libLoad){
+    if(maxLibLoad <= libLoad){
       run();
     }
   }

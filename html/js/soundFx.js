@@ -65,16 +65,12 @@ define(["rawPCM"],
 
       if(index >= self.soundCnt-1){
         self.soundLoadComplete = true;
-        if(typeof self.loadComplete === "function"){
-          self.loadComplete(self.soundLoadCnt);
+        if(typeof _completeFunc === "function"){
+          _completeFunc.call();
         }
       }
 
-      if(typeof _completeFunc === "function"){
-        _completeFunc.call();
-      }
-
-      return function(){};
+      return;
     };
 
     function get(audioName){
