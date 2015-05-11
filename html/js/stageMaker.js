@@ -71,9 +71,18 @@ define([], function(){
     //level에 따라서 심는 갯수가 달라짐
     for(k=skyLen; k<=_level; k++){
       for(i=0; i<=31; i++){
-        var result = getProbability(50);
-        if(result % 50 === 0){
-          field[k][i] = 20;
+
+        //좌우 구석에는 특별히 나무가 더 많이 나와야 함.
+        if(i<=3 || i>=28){
+          var result = getProbability(80);
+          if(result > 70){
+            field[k][i] = 20;
+          }
+        } else {
+          var result = getProbability(50);
+          if(result % 50 === 0){
+            field[k][i] = 20;
+          }
         }
       }
     }
