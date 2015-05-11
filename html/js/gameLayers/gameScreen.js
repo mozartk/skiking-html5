@@ -57,10 +57,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     soundFx = engine.soundFx;
     skiTile  = engine.gameImage.getImage('ski');
 
-    window.skiTile = skiTile;
-
-
-    this.init();
+    if(layerOption.enable === true){
+      this.init();
+    }
   };
 
   gameScreenLayer.prototype.init = function(){
@@ -73,7 +72,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     stage = stageMaker.seed(Date.now()).get(30);
     window.stage = stage;
     stageLen = stage.length;
-
   }
 
   function playerInit(){

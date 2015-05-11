@@ -1,4 +1,6 @@
-define([], function(){
+define(['seedRandom'], function(seedrandom){
+  //seedRandom
+  // https://github.com/davidbau/seedrandom
   /*
   0~50 바닥
     0~10 눈
@@ -16,19 +18,26 @@ define([], function(){
     43,44,45 -> board trail
     43,44,45 -> board trail
 
-
-
    */
 
   var timeStamp, tempStamp;
+  var rand;
+
+  var stageConfig = {
+    level: []
+  };
+  var k = 0;
+  for(var i=0; i<=10; i++){
+    stageConfig.level[i] = 9850-(i*50);
+  }
 
   function stageMaker(){
-
+    this.seedrandom = seedrandom;
   }
 
   stageMaker.prototype.seed = function(_timeStamp){
     tempStamp = timeStamp = _timeStamp;
-
+    rand = this.seedrandom;
     return this;
   }
 
@@ -39,11 +48,14 @@ define([], function(){
   //getProbability
   function getProbability(range){
     if(typeof range === "undefined") range = 100;
-    return getRand(tempStamp++) % range;
+    return Math.floor(getRand(tempStamp++)*range);
   }
 
   function getRand(seed){
-    return Math.floor(Math.abs(('0.'+Math.sin(seed).toString().substr(6)))*100);
+    // old version
+    // return Math.floor(Math.abs(('0.'+Math.sin(seed).toString().substr(6)))*100);
+
+    return rand(seed)();
   }
 
   function makeProcess(level){
@@ -74,13 +86,13 @@ define([], function(){
 
         //좌우 구석에는 특별히 나무가 더 많이 나와야 함.
         if(i<=3 || i>=28){
-          var result = getProbability(80);
-          if(result > 70){
+          var result = getProbability();
+          if(result > 80){
             field[k][i] = 20;
           }
         } else {
-          var result = getProbability(50);
-          if(result % 50 === 0){
+          var result = getProbability(10000);
+          if(result > stageConfig.level[3]){
             field[k][i] = 20;
           }
         }
