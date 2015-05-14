@@ -9,6 +9,21 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var gameSpeed = 1;
   var gameTick = 1;
 
+  var gameText = {
+    gameover: "﻿How Short Fame Lasts...",
+    hitkey: "Hit A Key!",
+    entername: "Enter Some Initials",
+    haveFreeguy: "You Have A Free Guy!",
+    howFreeguy: "How About A Free Guy?",
+    tryagain: "Try This Hill Again!",
+    clear: "You Rocked That Hill!",
+    real: "You Should Go Ski For Real!",
+    Fiftyhill: "You Finished All 50 Hills!",
+    score: "Score: 100"
+  };
+
+  var clearText = false;
+
   var player = {
     run: false,
     stage: 1,           //currentStage
@@ -43,10 +58,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   bufferCtx.imageSmoothingEnabled = false;
   window.bufferCtx = bufferCtx;
 
+  bufferCtx.color = "#000000";
+  bufferCtx.font = "12px Perfect-DOS-VGA-437";
+
   var keyCode;
-
-
-  window.maker = StageMaker;
 
   function gameScreenLayer(layerOption, engine){
     this.layerOption = layerOption;
@@ -65,6 +80,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   gameScreenLayer.prototype.init = function(){
     makeStage();
     playerInit();
+    clearText = false;
   }
 
   function makeStage(){
@@ -209,6 +225,18 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     return spritePos;
   }
 
+  function paintText(){
+    //클리어 시
+    if(clearText === true){
+      bufferCtx.fillText(gameText.score, 65, 80, 200);
+      bufferCtx.fillText(gameText.clear, 65, 90, 200);
+    }
+
+    //if(inputName)
+
+    //게임 오버 시
+  }
+
   function currentfloorInfo(num){
     if(typeof num === "undefined") num = 0;
     return stage[player.currentPosY+14+(num)];
@@ -297,7 +325,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     //종료지점 통과했을 때.
     if (line[0] == 34 && player.alive === true) {
       soundFx.play("clap");
-      player.clear = true;
+      finishRun();
     }
 
     //나무 충돌 시 판정
@@ -331,6 +359,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       if (player.triggerStop <= 0) {
         player.run = false;
       }
+    }
+
+    if(player.run === false && player.triggerStop === 0){
+      clearText = true;
     }
   }
 
@@ -427,11 +459,9 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     paintMaterial();
     paintPlayer();
 
+    paintText();
 
-    //if(reDraw == true){
-      ctx.drawImage(scrBuffer, 0, 0);
-    //  reDraw = false;
-    //}
+    ctx.drawImage(scrBuffer, 0, 0);
   }
 
   return gameScreenLayer;

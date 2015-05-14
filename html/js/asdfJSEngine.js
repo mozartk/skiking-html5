@@ -1,5 +1,5 @@
 //v0.0.1
-define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($, _, gameImage, soundFx, keyCode){
+define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont"],  function($, _, gameImage, soundFx, keyCode, gameFont){
     'use strict';
   var currentLayerLevel = 100;
   var storeLayer = [];
@@ -17,7 +17,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
   };
 
   var libLoad = 0;
-  var maxLibLoad = 2;
+  var maxLibLoad = 3;
   var engine;
 
   function asdfJSEngine(inst_dataParse){
@@ -31,6 +31,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
 
     this.gameImage = new gameImage(dataParse, waitDependent.bind(this));
     this.soundFx   = new soundFx(dataParse.get("skisound.wad"), waitDependent.bind(this));
+    this.font   = new gameFont(dataParse.get("CGALow.png"), waitDependent.bind(this));
   };
 
   function waitDependent(engine){
@@ -45,6 +46,11 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode"],  function($,
     engine.addLayer(101, {title: "gameScreen", visible: false, enabled: false, "layer":"gameScreen"});
     engine.painter.init(this);
     engine.painter.start();
+
+    var gameCanvas = document.getElementById('gameCanvas');
+    if(gameCanvas !== null) {
+      gameCanvas.focus();
+    }
   }
 
   asdfJSEngine.prototype.screenContext = null;

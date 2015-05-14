@@ -9,7 +9,13 @@ define(["jquery", "underscore"],
       this.dataFileUrl = "skiking.dat.png";
       this.config = {
         //이미지 바이너리 뒤에 게임데이터를 붙였기 때문에 이미지만큼의 데이터는 제외시켜야 함.
-        imgDataLen : 136
+        imgDataLen : 136,
+
+        //url, Name
+        dataFileList:[
+          ['skiking.dat.png', 'SKIKING.DAT'],
+          ['CGALow.png','CGALOW.PNG']
+        ]
       };
 
       this.gameData = {};
@@ -17,20 +23,20 @@ define(["jquery", "underscore"],
 
     /* 비동기로 게임 데이터 가져옴
     * 현재는 게임 파일 용량이 크기 때문에 Imgur에 게임 파일 올려두고 거기서 읽어옴    * */
-    dataParse.prototype.loadData = function(){
+    dataParse.prototype.loadData = function(url, name){
       var that = this;
       return new Promise(function(resolve, reject){
         var oReq = new XMLHttpRequest();
         oReq.addEventListener("progress", function(e){
           console.log(e.loaded);
         });
-        oReq.open("GET", that.dataFileUrl, true);
+        oReq.open("GET", url, true);
         oReq.responseType = "arraybuffer";
 
         oReq.onload = function (oEvent) {
           var arrayBuffer = oReq.response; // Note: not oReq.responseText
-          imgData = new Uint8Array(arrayBuffer);
-          fetching(that);
+          var data = new Uint8Array(arrayBuffer);
+          fetching(that, name, data);
           resolve(that.get);
         };
 
@@ -48,30 +54,34 @@ define(["jquery", "underscore"],
 
 
     //Object에 게임 데이터를 할당해둠
-    function fetching(that){
-      var skiData = that.gameData['SKIKING.DAT'] = imgData.subarray(that.config.imgDataLen);
+    function fetching(that, name, data){
+      if(name === 'SKIKING.DAT') {
+        var skiData = that.gameData[name] = data.subarray(that.config.imgDataLen);
 
-      for(var i=20; i<=180; i = i+20){
-        var addrS = findAddr(i, skiData);
-        var addrE = findAddr(i+20, skiData);
+        for (var i = 20; i <= 180; i = i + 20) {
+          var addrS = findAddr(i, skiData);
+          var addrE = findAddr(i + 20, skiData);
 
-        //GET FILE NAME
-        var j = i-16;
-        var fileName = [];
-        while(skiData[j] !=0){
-          var data = skiData[j];
-          if(data != 0){
-            fileName.push(String.fromCharCode(data));
+          //GET FILE NAME
+          var j = i - 16;
+          var fileName = [];
+          while (skiData[j] != 0) {
+            var data = skiData[j];
+            if (data != 0) {
+              fileName.push(String.fromCharCode(data));
+            }
+            j++;
           }
-          j++;
-        }
-        var fileName = fileName.join("");
+          var fileName = fileName.join("");
 
-        //SKISEL.DAT is last file
-        if(fileName === "SKISEL.DAT"){
-          addrE[0] = skiData.length;//EOF
+          //SKISEL.DAT is last file
+          if (fileName === "SKISEL.DAT") {
+            addrE[0] = skiData.length;//EOF
+          }
+          that.gameData[fileName] = skiData.subarray(addrS[0], addrE[0]);
         }
-        that.gameData[fileName] = skiData.subarray(addrS[0], addrE[0]);
+      } else {
+        that.gameData[name] = data;
       }
     };
 
