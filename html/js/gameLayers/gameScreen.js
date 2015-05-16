@@ -228,8 +228,8 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   function paintText(){
     //클리어 시
     if(clearText === true){
-      bufferCtx.fillText(gameText.score, 65, 80, 200);
-      bufferCtx.fillText(gameText.clear, 65, 90, 200);
+      engine.font.drawText(bufferCtx, gameText.score, 65, 90);
+      engine.font.drawText(bufferCtx, gameText.clear, 65, 100);
     }
 
     //if(inputName)
@@ -458,7 +458,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     paintStage(); // 결과 처리
     paintMaterial();
     paintPlayer();
-
+    //bufferCtx.clearRect(0,0,320,240);
     paintText();
 
     ctx.drawImage(scrBuffer, 0, 0);

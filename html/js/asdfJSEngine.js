@@ -31,7 +31,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont"],  
 
     this.gameImage = new gameImage(dataParse, waitDependent.bind(this));
     this.soundFx   = new soundFx(dataParse.get("skisound.wad"), waitDependent.bind(this));
-    this.font   = new gameFont(dataParse.get("CGALow.png"), waitDependent.bind(this));
+    this.font   = new gameFont(dataParse.get("CGALow.png"), waitDependent.bind(this), screenConf);
   };
 
   function waitDependent(engine){
