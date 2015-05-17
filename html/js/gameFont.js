@@ -101,9 +101,10 @@ define([],function(){
 
     var resultCode = asciiCode - fontStart;
 
+    // 정확함을 위해 1픽셀 보정함
     var fontPos = {
-      x : (((resultCode-fontXcount)%32) * fontConf.fontWidth)+1,
-      y : ((Math.floor(resultCode/fontXcount) * fontConf.fontHeight))+1 // 정확함을 위해 1픽셀 보정함
+      x : ((asciiCode%32) * fontConf.fontWidth)-fontConf.fontWidth+1,
+      y : ((Math.floor(resultCode/fontXcount) * fontConf.fontHeight))+1
     };
 
     return fontPos;

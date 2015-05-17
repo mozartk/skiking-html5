@@ -93,8 +93,11 @@ define([],
 
       var bArr = new Uint8Array(int.buffer);
       var n;
-      for (let n of bArr) {
-        buf.push(n);
+
+      var len = bArr.length;
+      //for (let n of bArr) {
+      for(var i=0; i<len; i++){
+        buf.push(bArr[i]);
       }
 
       if(typeof size === "number"){

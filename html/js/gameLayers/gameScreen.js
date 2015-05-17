@@ -9,20 +9,64 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var gameSpeed = 1;
   var gameTick = 1;
 
-  var gameText = {
-    gameover: "﻿How Short Fame Lasts...",
-    hitkey: "Hit A Key!",
-    entername: "Enter Some Initials",
-    haveFreeguy: "You Have A Free Guy!",
-    howFreeguy: "How About A Free Guy?",
-    tryagain: "Try This Hill Again!",
-    clear: "You Rocked That Hill!",
-    real: "You Should Go Ski For Real!",
-    Fiftyhill: "You Finished All 50 Hills!",
-    score: "Score: 100"
-  };
 
-  var clearText = false;
+  var printText = {
+    clearText: false,
+    failText: false,
+    printTime1 : 0,
+    printTime2 : 0,
+    printTime3 : 0,
+    hitkeyTerm : 1500,
+
+    gameText: {
+      gameover: "How Short Fame Lasts...",
+      hitkey: "Hit A Key!",
+      entername: "Enter Some Initials",
+      haveFreeguy: "You Have A Free Guy!",
+      howFreeguy: "How About A Free Guy?",
+      tryagain: "Try This Hill Again!",
+      clear: "You Rocked That Hill!",
+      real: "You Should Go Ski For Real!",
+      Fiftyhill: "You Finished All 50 Hills!",
+      score: "Score: "
+    },
+
+    init: function(){
+      printText.clearText = false;
+      printText.failText= false;
+      printText.printTime1 = 0;
+      printText.printTime2 = 0;
+      printText.printTime3 = 0;
+    },
+
+    scoreText: function(score){
+      return printText.gameText.score + score.toString();
+    },
+
+    resultText: function(){
+      if(player.clear === true){
+        return printText.gameText.clear;
+      } else if(player.alive !== true){
+        return printText.gameText.gameover;
+      }
+    },
+
+    print: function(ctx){
+      if(printText.clearText === true) {
+        if (printText.printTime1 === 0) {
+          printText.printTime1 = Date.now();
+        } else {
+          var text = printText.gameText;
+          engine.font.drawText(ctx, printText.scoreText(player.score), 65, 90);
+          engine.font.drawText(ctx, printText.resultText(), 65, 100);
+
+          if (printText.printTime1 + printText.hitkeyTerm < Date.now()) {
+            engine.font.drawText(ctx, text.hitkey, 65, 120);
+          }
+        }
+      }
+    }
+  }
 
   var player = {
     run: false,
@@ -35,6 +79,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     currentPosY: 0,     //0~1
     alive: true,        //0alive 1dead
     distance: 0,        //0~~
+    score: 0,        //0~~
     triggerStop: 20,    //통화 후 20칸 움직임
     clear: false        //
   };
@@ -80,7 +125,8 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   gameScreenLayer.prototype.init = function(){
     makeStage();
     playerInit();
-    clearText = false;
+
+    printText.init();
   }
 
   function makeStage(){
@@ -226,15 +272,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   }
 
   function paintText(){
-    //클리어 시
-    if(clearText === true){
-      engine.font.drawText(bufferCtx, gameText.score, 65, 90);
-      engine.font.drawText(bufferCtx, gameText.clear, 65, 100);
-    }
-
-    //if(inputName)
-
-    //게임 오버 시
+    printText.print(bufferCtx);
   }
 
   function currentfloorInfo(num){
@@ -257,25 +295,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     var curResult;
     var dir = player.skiselDirection;
     var pos = player.currentPosX;
-    //switch(dir){
-    //  case 0: //left
-    //    if(pos > gameConf.x_min){
-    //      curResult = pos-1;
-    //    } else {
-    //      curResult = gameConf.x_min;
-    //    }
-    //    break;
-    //  case 2: //right
-    //    if(pos < gameConf.x_max){
-    //      curResult = pos+1;
-    //    } else {
-    //      curResult = gameConf.x_max;
-    //    }
-    //    break;
-    //  default:
-    //    curResult = pos;
-    //    break;
-    //}
 
     return pos;
   }
@@ -287,8 +306,10 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
     var lastX = player.currentPosX;
     var lastY = player.currentPosY;
+
     //한칸 전진 플로우
     player.currentPosY++;
+
     //방향을 틀어도 바로 움직이는게 아니라 두번째 이동부터 움직이기 때문에
     //이전 방향과 지금 방향을 비교해서 두번째 이동인지 체크하기 위해 사용
     var dirResult = player.lastDirection == player.skiselDirection;
@@ -351,6 +372,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     if (player.alive === true &&
       player.clear === false) {
       player.distance++;
+      player.score++;
     }
 
     //결승전 통과하면 20칸 이동 후 이동 종료
@@ -362,7 +384,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     }
 
     if(player.run === false && player.triggerStop === 0){
-      clearText = true;
+      printText.clearText = true;
     }
   }
 
@@ -441,9 +463,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           break;
       }
 
-      //playerFF();
-      //reDraw = true;
-
       if(player.run !== true && player.clear !== true){
         startRun();
       }
@@ -458,7 +477,7 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     paintStage(); // 결과 처리
     paintMaterial();
     paintPlayer();
-    //bufferCtx.clearRect(0,0,320,240);
+
     paintText();
 
     ctx.drawImage(scrBuffer, 0, 0);

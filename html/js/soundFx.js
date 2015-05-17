@@ -7,7 +7,11 @@ define(["rawPCM"],
 
     function soundFx(sound, completeFunc){
       var self = dSelf = this;
-      this.context = new AudioContext();
+      if(typeof AudioContext === "undefined"){
+        this.context = new webkitAudioContext();
+      } else {
+        this.context = new AudioContext();
+      }
       this.soundLoadComplete = false;
       this.sound = sound;
       this.soundLength = sound.length;
