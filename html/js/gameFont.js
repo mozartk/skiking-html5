@@ -28,6 +28,7 @@ define([],function(){
     _completeFunc = completeFunc;
     fontData = data;
     screenConf = config;
+    this.fontConf = fontConf;
 
     this.init();
   }
@@ -76,6 +77,10 @@ define([],function(){
   }
 
   function parsingText(text){
+    if(typeof text === "number"){
+      text = text.toString();
+    }
+
     if(typeof text !== "string") {
       console.error('not text');
       return false;

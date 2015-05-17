@@ -1,5 +1,5 @@
 //v0.0.1
-define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
+define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageMaker, _keyCode){
   'use strict';
 
   var reDraw = false;
@@ -9,14 +9,16 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   var gameSpeed = 1;
   var gameTick = 1;
 
+  var gameInputScore = false;
+
 
   var printText = {
-    clearText: false,
-    failText: false,
+    printFlag: false,
     printTime1 : 0,
-    printTime2 : 0,
-    printTime3 : 0,
-    hitkeyTerm : 1500,
+    nextMsgTerm : 1500,
+    scorePadding: 6,
+
+    nameBuffer: "",
 
     gameText: {
       gameover: "How Short Fame Lasts...",
@@ -28,15 +30,48 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       clear: "You Rocked That Hill!",
       real: "You Should Go Ski For Real!",
       Fiftyhill: "You Finished All 50 Hills!",
+      hill: "Hill ",
+      freeguys: "Free Guys ",
       score: "Score: "
     },
 
     init: function(){
-      printText.clearText = false;
-      printText.failText= false;
+      printText.printFlag = false;
+      printText.nameBuffer = "";
       printText.printTime1 = 0;
-      printText.printTime2 = 0;
-      printText.printTime3 = 0;
+    },
+
+
+    rpad: function(str, limit){
+      if(typeof str === "number"){
+        str = str.toString();
+      }
+
+      while(str.length < limit){
+        str += " ";
+      }
+
+      return str;
+    },
+
+    lpad: function(str, limit){
+      if(typeof str === "number"){
+        str = str.toString();
+      }
+
+      while(str.length < limit){
+        str = " " + str;
+      }
+
+      return str;
+    },
+
+    hillText: function(){
+      return printText.gameText.hill + "("+printText.lpad(player.stage, 2)+")";
+    },
+
+    freeGuysText: function(){
+      return printText.gameText.freeguys + "("+printText.lpad(player.freeGuys, 2)+")";
     },
 
     scoreText: function(score){
@@ -51,8 +86,45 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       }
     },
 
-    print: function(ctx){
-      if(printText.clearText === true) {
+    inputText: function(){
+      return printText.gameText.entername + "["+printText.getInputName()+"]";
+    },
+
+    inputName: function(keyEvent){
+      var keyCode = keyEvent.keyCode;
+
+      if(keyCode === _keyCode.VK_RETURN){
+        //scoreInput
+        //skip save score if when input is null
+      }
+
+      if(keyCode === _keyCode.VK_RETURN || keyCode === _keyCode.VK_ESCAPE){
+        goToTitle();
+      }
+
+      //정해진 키코드 이외에 입력값 막음
+      if(keyCode >= 32 && keyCode <= 126){
+
+        //대소문자
+        if(keyEvent.shiftKey === false){
+          keyCode = keyCode + 32;
+        }
+
+        if(printText.nameBuffer.length < 3){
+          printText.nameBuffer += String.fromCharCode(keyCode);
+        }
+      }
+    },
+
+    getInputName: function(){
+      var name = printText.nameBuffer;
+      printText.rpad(name);
+
+      return printText.lpad(name, 3);
+    },
+
+    resultPrint: function(ctx){
+      if(printText.printFlag === true) {
         if (printText.printTime1 === 0) {
           printText.printTime1 = Date.now();
         } else {
@@ -60,17 +132,36 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
           engine.font.drawText(ctx, printText.scoreText(player.score), 65, 90);
           engine.font.drawText(ctx, printText.resultText(), 65, 100);
 
-          if (printText.printTime1 + printText.hitkeyTerm < Date.now()) {
-            engine.font.drawText(ctx, text.hitkey, 65, 120);
+          if (printText.printTime1 + printText.nextMsgTerm < Date.now()) {
+            if(gameInputScore) {
+              engine.font.drawText(ctx, printText.inputText(), 65, 110);
+            } else {
+              engine.font.drawText(ctx, text.hitkey, 65, 120);
+            }
           }
         }
       }
+    },
+
+    statusPrint: function(ctx){
+      var status = printText.hillText() + " " + printText.freeGuysText();
+      var distance = printText.lpad(player.distanceLeft,printText.scorePadding);
+      var distancePos = engine.screenConf.rw - (printText.scorePadding*engine.font.fontConf.fontWidth);
+
+      engine.font.drawText(ctx, status, 1, 1);
+      engine.font.drawText(ctx, distance, distancePos, 1);
+    },
+
+    print: function(ctx){
+      printText.statusPrint(ctx);
+      printText.resultPrint(ctx);
     }
   }
 
   var player = {
     run: false,
     stage: 1,           //currentStage
+    freeGuys: 0,          //freeGuys(live?)
     skisel: 0,          //skisel
     skiselDirection: 1, //0left 1mid 2right
     lastDirection: 1, //0left 1mid 2right
@@ -79,13 +170,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     currentPosY: 0,     //0~1
     alive: true,        //0alive 1dead
     distance: 0,        //0~~
+    distanceLeft: 0,
     score: 0,        //0~~
     triggerStop: 20,    //통화 후 20칸 움직임
     clear: false        //
   };
-
-  window.player = player;
-
 
   var gameConf = {
     x_min : 0,
@@ -101,10 +190,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   var bufferCtx  = scrBuffer.getContext('2d');
   bufferCtx.imageSmoothingEnabled = false;
-  window.bufferCtx = bufferCtx;
-
-  bufferCtx.color = "#000000";
-  bufferCtx.font = "12px Perfect-DOS-VGA-437";
 
   var keyCode;
 
@@ -147,7 +232,12 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     player['alive'] =  true; //0alive 1dead
     player['distance'] =  0; //0~~
     player['triggerStop'] =  20//이벤트 후 20칸 움직임
-    player['clear'] =  false; //
+    player['clear'] =  false;
+    player['distanceLeft'] = 67;
+  }
+
+  function scoreCanInput(){
+    return true;
   }
 
   function paintStage(){
@@ -292,8 +382,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
   //방향을 고려한 현재 포지션
   function curDirPos(){
-    var curResult;
-    var dir = player.skiselDirection;
     var pos = player.currentPosX;
 
     return pos;
@@ -319,6 +407,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
         if (player.currentPosX > gameConf.x_min && dirResult) {
           player.currentPosX--;
         }
+
+        //맨 구석에 가면 방향을 정면으로 돌려야 함.
+        if (player.currentPosX <= gameConf.x_min){
+          player.skiselDirection = 1;
+        }
         break;
 
       case 1:
@@ -327,6 +420,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       case 2:
         if (player.currentPosX < gameConf.x_max && dirResult) {
           player.currentPosX++;
+        }
+
+        //맨 구석에 가면 방향을 정면으로 돌려야 함.
+        if (player.currentPosX >= gameConf.x_max){
+          player.skiselDirection = 1;
         }
         break;
     }
@@ -372,10 +470,11 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
     if (player.alive === true &&
       player.clear === false) {
       player.distance++;
+      player.distanceLeft--;
       player.score++;
     }
 
-    //결승전 통과하면 20칸 이동 후 이동 종료
+    //결승전 통과하거나 죽으면 20칸 이동 후 이동 종료
     if (player.clear === true || player.alive === false) {
       player.triggerStop--;
       if (player.triggerStop <= 0) {
@@ -383,8 +482,14 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
       }
     }
 
+
+
     if(player.run === false && player.triggerStop === 0){
-      printText.clearText = true;
+      printText.printFlag = true;
+
+      if(player.alive === false){
+        gameInputScore = scoreCanInput();
+      }
     }
   }
 
@@ -441,7 +546,14 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
   //true를 리턴하면 키를 여기서 먹도록 처리
   //false를 리턴하면 여기서 키 이벤트를 다시 상위로 보냄, 이 경우에는 다른 레이어로 키 이벤트를 다시 보내도록 처리해야 함
   gameScreenLayer.prototype.event = function(e){
-    if(e.type == 'keydown' || e.type == 'touchstart') {
+    if(e.type == 'keydown') {
+
+      //점수 입력
+      if(gameInputScore){
+        printText.inputName(e);
+        return;
+      }
+
       //게임 클리어 / 게임 오버 시 방향키는 먹히지 말아야 함.
       switch (e.keyCode) {
         case keyCode.VK_DOWN:
@@ -455,9 +567,6 @@ define(["jquery", "underscore", "stageMaker"],  function($, _, StageMaker){
 
       setDirection(e.keyCode);
       switch (e.keyCode) {
-        case keyCode.VK_SPACE:
-          stopRun();
-          break;
         case keyCode.VK_ESCAPE:
           goToTitle();
           break;
