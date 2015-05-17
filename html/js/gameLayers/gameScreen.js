@@ -2,14 +2,13 @@
 define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageMaker, _keyCode){
   'use strict';
 
-  var reDraw = false;
   var soundFx;
-
   var stage, stageLen, skiTile;
-  var gameSpeed = 1;
-  var gameTick = 1;
-
+  
+  //game flag
   var gameInputScore = false;
+  var nextStageFlag = false;
+  var gameOverFlag = false;
 
 
   var printText = {
@@ -103,24 +102,33 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       }
 
       //정해진 키코드 이외에 입력값 막음
-      if(keyCode >= 32 && keyCode <= 126){
+      if((keyCode >= 32 && keyCode <= 126) || keyCode === _keyCode.VK_BACK_SPACE){
 
-        //대소문자
-        if(keyEvent.shiftKey === false){
-          keyCode = keyCode + 32;
-        }
+        //글자 삭제
+        if(keyCode === _keyCode.VK_BACK_SPACE){
+          keyEvent.preventDefault();
+          var len = printText.nameBuffer.length;
+          if(len > 0){
+            printText.nameBuffer = printText.nameBuffer.substr(0, len-1);
+          }
+        } else {
+          //글자 입력
+          //대소문자 처리
+          if(keyEvent.shiftKey === false){
+            keyCode = keyCode + 32;
+          }
 
-        if(printText.nameBuffer.length < 3){
-          printText.nameBuffer += String.fromCharCode(keyCode);
+          if(printText.nameBuffer.length < 3){
+            printText.nameBuffer += String.fromCharCode(keyCode);
+          }
         }
       }
     },
 
     getInputName: function(){
       var name = printText.nameBuffer;
-      printText.rpad(name);
 
-      return printText.lpad(name, 3);
+      return printText.rpad(name, 3);
     },
 
     resultPrint: function(ctx){
@@ -137,6 +145,13 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
               engine.font.drawText(ctx, printText.inputText(), 65, 110);
             } else {
               engine.font.drawText(ctx, text.hitkey, 65, 120);
+              if(player.clear === true) {
+                nextStageFlag = true;
+              }
+
+              if(player.alive === false && player.clear === false){
+                gameOverFlag = true;
+              }
             }
           }
         }
@@ -208,32 +223,50 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
   };
 
   gameScreenLayer.prototype.init = function(){
-    makeStage();
+    gameInit();
     playerInit();
+    makeStage();
 
     printText.init();
   }
 
+  function stageLength(stageNum){
+    return 50 + ((stageNum-1)*25);
+  }
+
   function makeStage(){
+    var stageLen = stageLength(player.stage)
     var stageMaker = new StageMaker();
-    stage = stageMaker.seed(Date.now()).get(30);
-    window.stage = stage;
-    stageLen = stage.length;
+    stage = stageMaker.seed(Date.now()).get(stageLen);
+    player.distanceLeft = stageLen;
+  }
+  
+  function gameInit(){
+    gameInputScore = false;
+    gameOverFlag = false;
+
+    //basic player settings;
+    player['stage'] = 1;
+    player['freeGuys'] = 0;
+    player['alive'] = true;
+    player['distance'] = 0;
+    player['distanceLeft'] = 0;
+    player['score'] = 0;
+    player['skisel'] = 0;
   }
 
   function playerInit(){
-    player['run'] =  false;
-    player['skisel'] =  0; //skisel
-    player['skiselDirection'] =  1; //0left 1mid 2right
-    player['lastDirection'] =  1; //0left 1mid 2right
+    nextStageFlag = false;
+
+    player['triggerStop'] = 20;
+    player['run'] = false;
+    player['skiselDirection'] = 1; //0left 1mid 2right
+    player['lastDirection'] = 1; //0left 1mid 2right
     player['speedState'] = 0;//0~31
-    player['currentPosX'] =  16;//scroll pos
-    player['currentPosY'] =  0;//0~1
-    player['alive'] =  true; //0alive 1dead
-    player['distance'] =  0; //0~~
-    player['triggerStop'] =  20//이벤트 후 20칸 움직임
-    player['clear'] =  false;
-    player['distanceLeft'] = 67;
+    player['currentPosX'] = 16;//scroll pos
+    player['currentPosY'] = 0;//0~1
+    player['alive'] = true; //0alive 1dead
+    player['clear'] = false;
   }
 
   function scoreCanInput(){
@@ -479,16 +512,12 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       player.triggerStop--;
       if (player.triggerStop <= 0) {
         player.run = false;
-      }
-    }
+        printText.printFlag = true;
 
-
-
-    if(player.run === false && player.triggerStop === 0){
-      printText.printFlag = true;
-
-      if(player.alive === false){
-        gameInputScore = scoreCanInput();
+        //클리어 못하고 죽으면 하이스코어 입력할 수 있는지 체크 후 입력
+        if(player.alive === true && player.clear === false){
+          gameInputScore = scoreCanInput();
+        }
       }
     }
   }
@@ -505,12 +534,21 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     player.run = false;
   }
 
+
+  function goToNextStage(){
+    nextStageFlag = false;
+    player.stage++;
+
+    playerInit();
+    makeStage();
+    printText.init();
+  }
+
   function goToTitle(){
     engine.setVisible(100, true);
     engine.setVisible(101, false);
     engine.getLayer(100).init();
   }
-
 
   //시드없이 랜덤
   function rand(max){
@@ -551,6 +589,16 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       //점수 입력
       if(gameInputScore){
         printText.inputName(e);
+        return;
+      }
+
+      if(nextStageFlag){
+        goToNextStage();
+        return;
+      }
+
+      if(gameOverFlag){
+        goToTitle();
         return;
       }
 

@@ -9,7 +9,6 @@ define(["jquery", "underscore", "dataParse"],
     }
 
     function init(){
-
       //laod game data
       Promise.all(
         dataParse.config.dataFileList.map(function(arr){

@@ -59,10 +59,9 @@ define(['seedRandom'], function(seedrandom){
   }
 
   function makeProcess(level){
-    //field = [];
-    var i = 0, k = 0;
-    var _level = (level*2) + 250;//지형
-    var _level = (level)+200;
+    var i = 0;
+    var _level = level + 150; //150은 여유분. 스테이지가 끝나도 20칸은 달리기 때문에 여유있게 지정해둠
+
 
     var field = makeSky();
     var skyLen = (field.length-1);
@@ -101,7 +100,6 @@ define(['seedRandom'], function(seedrandom){
 
     //마지막 결승선을 그립니다.
     field = makeEndLine(field);
-    window.field = field;
 
     return field;
   }
@@ -134,7 +132,7 @@ define(['seedRandom'], function(seedrandom){
     //sky 7, horizon 1
     //H 6, 8pixel
 
-    var endline = field.length-150;
+    var endline = field.length-100-22-15;
     var i = 0;
 
     var lineBuffer = document.createElement('canvas');
