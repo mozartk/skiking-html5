@@ -1,5 +1,5 @@
 //v0.0.1
-define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont"],  function($, _, gameImage, soundFx, keyCode, gameFont){
+define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont", "gameScore"],  function($, _, gameImage, soundFx, keyCode, gameFont, gameScore){
     'use strict';
   var currentLayerLevel = 100;
   var storeLayer = [];
@@ -17,7 +17,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont"],  
   };
 
   var libLoad = 0;
-  var maxLibLoad = 3;
+  var maxLibLoad = 4;
   var engine;
 
   function asdfJSEngine(inst_dataParse){
@@ -31,7 +31,8 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont"],  
 
     this.gameImage = new gameImage(dataParse, waitDependent.bind(this));
     this.soundFx   = new soundFx(dataParse.get("skisound.wad"), waitDependent.bind(this));
-    this.font   = new gameFont(dataParse.get("CGALow.png"), waitDependent.bind(this), screenConf);
+    this.font      = new gameFont(dataParse.get("CGALow.png"), waitDependent.bind(this), screenConf);
+    this.score     = new gameScore(waitDependent.bind(this));
   };
 
   function waitDependent(engine){

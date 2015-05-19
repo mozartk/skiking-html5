@@ -31,8 +31,11 @@ define(['seedRandom'], function(seedrandom){
     stageConfig.level[i] = 9850-(i*50);
   }
 
+  var self;
+
   function stageMaker(){
     this.seedrandom = seedrandom;
+    self = this;
   }
 
   stageMaker.prototype.seed = function(_timeStamp){
@@ -46,14 +49,15 @@ define(['seedRandom'], function(seedrandom){
   }
 
   //getProbability
-  function getProbability(range){
+  stageMaker.prototype.getProbability = function(range){
     if(typeof range === "undefined") range = 100;
     return Math.floor(getRand(tempStamp++)*range);
   }
 
   function getRand(seed){
     // old version
-    // return Math.floor(Math.abs(('0.'+Math.sin(seed).toString().substr(6)))*100);
+    var result = Math.abs(('0.'+Math.sin(seed).toString().substr(6)));
+    //var result = rand(seed)();
 
     return rand(seed)();
   }
@@ -71,7 +75,7 @@ define(['seedRandom'], function(seedrandom){
     for(k=skyLen; k<=_level; k++){
       var arr = new Array();
       for(i=0; i<=31; i++){
-        var result = getProbability(5);
+        var result = self.getProbability(5);
         arr.push(result);
       }
       field.push(arr);
@@ -85,12 +89,12 @@ define(['seedRandom'], function(seedrandom){
 
         //좌우 구석에는 특별히 나무가 더 많이 나와야 함.
         if(i<=3 || i>=28){
-          var result = getProbability();
+          var result = self.getProbability();
           if(result > 80){
             field[k][i] = 20;
           }
         } else {
-          var result = getProbability(10000);
+          var result = self.getProbability(10000);
           if(result > stageConfig.level[3]){
             field[k][i] = 20;
           }
@@ -114,7 +118,7 @@ define(['seedRandom'], function(seedrandom){
         } else if(k === 7) {
           arr.push(32);
         } else {
-          arr.push(getProbability(5));
+          arr.push(self.getProbability(5));
         }
       }
       sky.push(arr);
@@ -140,9 +144,9 @@ define(['seedRandom'], function(seedrandom){
     lineBuffer.height = 20;
 
     for(i=0; i<=31; i++){
-      field[endline-1][i] = getProbability(5);
+      field[endline-1][i] = self.getProbability(5);
       field[endline][i] = 34;
-      field[endline-1][i] = getProbability(5);
+      field[endline-1][i] = self.getProbability(5);
     }
 
     return field;

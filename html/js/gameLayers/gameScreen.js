@@ -9,6 +9,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
   var gameInputScore = false;
   var nextStageFlag = false;
   var gameOverFlag = false;
+  var engine;
 
 
   var printText = {
@@ -98,6 +99,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       }
 
       if(keyCode === _keyCode.VK_RETURN || keyCode === _keyCode.VK_ESCAPE){
+        engine.score.setScore(printText.nameBuffer, player.stage, player.score, player.skisel, player.distanceTotal);
         goToTitle();
       }
 
@@ -185,6 +187,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     currentPosY: 0,     //0~1
     alive: true,        //0alive 1dead
     distance: 0,        //0~~
+    distanceTotal: 0,        //0~~
     distanceLeft: 0,
     score: 0,        //0~~
     triggerStop: 20,    //통화 후 20칸 움직임
@@ -200,17 +203,15 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
 
 
   var scrBuffer = document.createElement('canvas');
-  scrBuffer.width = engine.screenConf.rw;
-  scrBuffer.height = engine.screenConf.rh;
 
   var bufferCtx  = scrBuffer.getContext('2d');
   bufferCtx.imageSmoothingEnabled = false;
 
   var keyCode;
 
-  function gameScreenLayer(layerOption, engine){
+  function gameScreenLayer(layerOption, _engine){
     this.layerOption = layerOption;
-    this.engine = engine;
+    this.engine = engine = _engine;
     this.engine.setLayer(this);
     this.player = player;
     keyCode = engine.keyCode;
@@ -223,6 +224,9 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
   };
 
   gameScreenLayer.prototype.init = function(){
+    scrBuffer.width = engine.screenConf.rw;
+    scrBuffer.height = engine.screenConf.rh;
+
     gameInit();
     playerInit();
     makeStage();
@@ -249,7 +253,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     player['stage'] = 1;
     player['freeGuys'] = 0;
     player['alive'] = true;
-    player['distance'] = 0;
+    player['distanceTotal'] = 0;
     player['distanceLeft'] = 0;
     player['score'] = 0;
     player['skisel'] = 0;
@@ -265,12 +269,13 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     player['speedState'] = 0;//0~31
     player['currentPosX'] = 16;//scroll pos
     player['currentPosY'] = 0;//0~1
+    player['distance'] = 0;//0~1
     player['alive'] = true; //0alive 1dead
     player['clear'] = false;
   }
 
   function scoreCanInput(){
-    return true;
+    return engine.score.isHiscore(player.score);
   }
 
   function paintStage(){
@@ -515,8 +520,10 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
         printText.printFlag = true;
 
         //클리어 못하고 죽으면 하이스코어 입력할 수 있는지 체크 후 입력
-        if(player.alive === true && player.clear === false){
-          gameInputScore = scoreCanInput();
+        if(player.alive === false && player.clear === false){
+          if(scoreCanInput() !== false){
+            gameInputScore = true;
+          }
         }
       }
     }

@@ -5,22 +5,91 @@ define(["jquery", "underscore"],  function($, _){
   var titleScreen;
   var reDraw = false;
   var soundFx;
+  var engine;
+  var scoreArr, scoreArrLen;
 
-  function titleScreenLayer(layerOption, engine){
+  var scrBuffer = document.createElement('canvas');
+
+  var bufferCtx  = scrBuffer.getContext('2d');
+  bufferCtx.imageSmoothingEnabled = false;
+
+  function titleScreenLayer(layerOption, _engine){
     this.layerOption = layerOption;
-    this.engine = engine;
+    this.engine = engine = _engine;
     this.engine.setLayer(this);
     soundFx = engine.soundFx;
     titleScreen  = engine.gameImage.getImage('skititl');
+
     this.init();
   };
 
   titleScreenLayer.prototype.init = function(){
-    drawTitleScreen();
+    scoreArr = engine.score.getScore();
+    scoreArrLen = scoreArr.length;
+
+    scrBuffer.width = engine.screenConf.rw;
+    scrBuffer.height = engine.screenConf.rh;
+
+    soundFx.play("titleskiking");
   }
 
   function drawTitleScreen(){
-    soundFx.play("titleskiking");
+    bufferCtx.drawImage(titleScreen, 0, 0);
+  }
+
+  var printText = {
+    rpad: function(str, limit){
+      if(typeof str === "number"){
+        str = str.toString();
+      }
+
+      while(str.length < limit){
+        str += " ";
+      }
+
+      return str;
+    },
+
+    lpad: function(str, limit){
+      if(typeof str === "number"){
+        str = str.toString();
+      }
+
+      while(str.length < limit){
+        str = " " + str;
+      }
+
+      return str;
+    },
+
+    scorePrint: function(ctx){
+      var i = 0;
+      var y_start = 129;
+      var x_start = 1;
+      var name_x = 24;
+      var stage_x = 72;
+      var clearFlag_x = 80;
+      var skisel_x = 100;
+      var score_x = 152;
+
+      for(i=0; i<scoreArrLen; i++){
+        var indexY = y_start + (i*11);
+        engine.font.drawText(ctx, printText.lpad(i+1, 2), x_start, indexY);
+        engine.font.drawText(ctx, scoreArr[i].userName, name_x, indexY);
+        engine.font.drawText(ctx, i, stage_x, indexY);
+        //engine.font.drawText(ctx, i, clearFlag_x, indexY);
+        engine.font.drawText(ctx, "?", skisel_x, indexY);
+        engine.font.drawText(ctx, printText.lpad(scoreArr[i].score, 6), score_x, indexY);
+      }
+    },
+
+    print: function(ctx){
+      printText.scorePrint(ctx);
+    }
+  }
+
+  function drawGameScore(){
+    printText.print(bufferCtx);
   }
 
   function goToGame(){
@@ -40,7 +109,10 @@ define(["jquery", "underscore"],  function($, _){
   };
 
   titleScreenLayer.prototype.paint = function(ctx){
-    ctx.drawImage(titleScreen, 0, 0);
+    drawTitleScreen();
+    drawGameScore();
+
+    ctx.drawImage(scrBuffer, 0, 0);
   }
 
   return titleScreenLayer;
