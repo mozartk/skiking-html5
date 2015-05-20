@@ -9,7 +9,7 @@ define(["bitmap"],function(Bitmap){
   var savedImageSize = {};
   savedImageSize['skititl'] = [8,6];
   savedImageSize['ski'] = [8,10]
-  savedImageSize['skisel'] = [2,2];
+  savedImageSize['skisel'] = [4,1];
 
   var tileIndex = {
     'snow' :       [0,1,2,3,4]
@@ -61,7 +61,7 @@ define(["bitmap"],function(Bitmap){
       for(i=0; i<40; i++){
         for(k=0; k<40; k++) {
           //검은색 이미지는 투명한 이미지
-          if(imageData[j][i][k] === "000000") {
+          if(imageName !== "skisel.dat" && imageData[j][i][k] === "000000"){
             continue;
           }
 

@@ -1,12 +1,13 @@
 //v0.0.1
-define(["jquery", "underscore"],  function($, _){
+define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
   'use strict';
 
-  var titleScreen, skiTile;
+  var titleScreen, skiTile, skiselTile;
   var reDraw = false;
   var soundFx;
   var engine;
   var scoreArr, scoreArrLen;
+  var userSkisel = 1;
 
   var scrBuffer = document.createElement('canvas');
 
@@ -18,8 +19,10 @@ define(["jquery", "underscore"],  function($, _){
     this.engine = engine = _engine;
     this.engine.setLayer(this);
     soundFx = engine.soundFx;
+
     titleScreen  = engine.gameImage.getImage('skititl');
     skiTile  = engine.gameImage.getImage('ski');
+    skiselTile  = engine.gameImage.getImage('skisel');
 
     this.init();
   };
@@ -31,11 +34,29 @@ define(["jquery", "underscore"],  function($, _){
     scrBuffer.width = engine.screenConf.rw;
     scrBuffer.height = engine.screenConf.rh;
 
+    userSkisel = 1;
+
     soundFx.play("titleskiking");
   }
 
   function drawTitleScreen(){
     bufferCtx.drawImage(titleScreen, 0, 0);
+  }
+
+  function skiselPrint(){
+    bufferCtx.drawImage(skiselTile, (userSkisel-1)*40, 0, 40, 40, 160, 20, 40, 40);
+  }
+
+  function selectSkiSel(mode){
+    if(mode === 'left'){
+      if(userSkisel > 1){
+        userSkisel--;
+      }
+    } else {
+      if(userSkisel < 4){
+        userSkisel++;
+      }
+    }
   }
 
   var printText = {
@@ -83,8 +104,6 @@ define(["jquery", "underscore"],  function($, _){
         bufferCtx.drawImage(skiTile, 100, 140, 10, 10, clearFlag_x, indexY-1, 10, 10);
         bufferCtx.drawImage(skiTile, (info.skisel*20), 140, 10, 10, skisel_x, indexY-1, 10, 10);
 
-        //engine.font.drawText(ctx, info.skisel, stage_x, indexY);
-        //engine.font.drawText(ctx, "?", skisel_x, indexY);
         engine.font.drawText(ctx, printText.lpad(scoreArr[i].score, 6), score_x, indexY);
       }
     },
@@ -101,7 +120,9 @@ define(["jquery", "underscore"],  function($, _){
   function goToGame(){
     engine.setVisible(100, false);
     engine.setVisible(101, true);
-    engine.getLayer(101).init();
+    engine.getLayer(101).init({
+      skisel: userSkisel
+    });
   }
 
   //event 처리 부분
@@ -109,13 +130,31 @@ define(["jquery", "underscore"],  function($, _){
   //false를 리턴하면 여기서 키 이벤트를 다시 상위로 보냄, 이 경우에는 다른 레이어로 키 이벤트를 다시 보내도록 처리해야 함
   titleScreenLayer.prototype.event = function(e){
     if(e.type === 'keydown'){
-      goToGame();
+      switch(e.which){
+        case keyCode.VK_LEFT:
+          selectSkiSel('left');
+          break;
+
+        case keyCode.VK_RIGHT:
+          selectSkiSel('right');
+          break;
+
+        case keyCode.VK_UP:
+        case keyCode.VK_DOWN:
+          break;
+
+        case keyCode.VK_SPACE:
+        case keyCode.VK_RETURN:
+          goToGame();
+          break;
+      }
     }
     return true;
   };
 
   titleScreenLayer.prototype.paint = function(ctx){
     drawTitleScreen();
+    skiselPrint();
     drawGameScore();
 
     ctx.drawImage(scrBuffer, 0, 0);

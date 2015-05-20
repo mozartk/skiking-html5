@@ -223,13 +223,17 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     }
   };
 
-  gameScreenLayer.prototype.init = function(){
+  gameScreenLayer.prototype.init = function(obj){
+    if(typeof obj === "undefined"){
+      obj = {};
+    }
+
     scrBuffer.width = engine.screenConf.rw;
     scrBuffer.height = engine.screenConf.rh;
 
-    gameInit();
-    playerInit();
-    makeStage();
+    gameInit(obj);
+    playerInit(obj);
+    makeStage(obj);
 
     printText.init();
   }
@@ -245,7 +249,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     player.distanceLeft = stageLen;
   }
   
-  function gameInit(){
+  function gameInit(obj){
     gameInputScore = false;
     gameOverFlag = false;
 
@@ -256,7 +260,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     player['distanceTotal'] = 0;
     player['distanceLeft'] = 0;
     player['score'] = 0;
-    player['skisel'] = 0;
+    player['skisel'] = obj.skisel || 1;
   }
 
   function playerInit(){
@@ -337,7 +341,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
 
         if(vv >= 40 && vv <= 42) {
           var spPos = 145+(20*(vv-40)); //결과는  0,1,2
-          bufferCtx.drawImage(skiTile, spPos, 70, 10, 10, kk*10, (k*10), 10, 10);
+          bufferCtx.drawImage(skiTile, spPos, 70+((player.skisel-1)*20), 10, 10, kk*10, (k*10), 10, 10);
         } else if(vv >= 43 && vv <= 44) {
           var spPos = 105+(20*(vv-43)); //결과는  0,1
           bufferCtx.drawImage(skiTile, spPos, 0, 10, 20, kk*10, (k*10)-10, 10, 20);
@@ -351,7 +355,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     //162,130
     var spritePos = {
       x : 10,
-      y : 35,
+      y : 60 + ((player.skisel-1)*20),
       w : 20,
       h : 20,
       cx: (player.currentPosX*10)+3,
@@ -364,32 +368,26 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       switch(player.skiselDirection){
         case 0:
           spritePos.x = 0;
-          spritePos.y = 60;
           break;
         case 1:
           spritePos.x = 20;
-          spritePos.y = 60;
           break;
         case 2:
           spritePos.x = 40;
-          spritePos.y = 60;
           break;
       }
 
       if(player.triggerStop <= 0){
         spritePos.x = 120;
-        spritePos.y = 60;
       }
     } else {
       //죽어서 뒹굴거리는게 끝나면
       if(player.triggerStop <= 0){
         spritePos.x = 100;
-        spritePos.y = 60;
       } else {
         //죽었을 때.
         //스프라이트가 2개라 1/2확률로 각각의 이미지 출력함
         spritePos.x = 60;
-        spritePos.y = 60;
         if(rand(2) === 1){
           spritePos.x += 20;
         }
