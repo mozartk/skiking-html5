@@ -2,7 +2,7 @@
 define(["jquery", "underscore"],  function($, _){
   'use strict';
 
-  var titleScreen;
+  var titleScreen, skiTile;
   var reDraw = false;
   var soundFx;
   var engine;
@@ -19,6 +19,7 @@ define(["jquery", "underscore"],  function($, _){
     this.engine.setLayer(this);
     soundFx = engine.soundFx;
     titleScreen  = engine.gameImage.getImage('skititl');
+    skiTile  = engine.gameImage.getImage('ski');
 
     this.init();
   };
@@ -68,17 +69,22 @@ define(["jquery", "underscore"],  function($, _){
       var x_start = 1;
       var name_x = 24;
       var stage_x = 72;
-      var clearFlag_x = 80;
-      var skisel_x = 100;
+      var clearFlag_x = 83;
+      var skisel_x = 103;
       var score_x = 152;
 
       for(i=0; i<scoreArrLen; i++){
         var indexY = y_start + (i*11);
+        var info = scoreArr[i];
         engine.font.drawText(ctx, printText.lpad(i+1, 2), x_start, indexY);
-        engine.font.drawText(ctx, scoreArr[i].userName, name_x, indexY);
-        engine.font.drawText(ctx, i, stage_x, indexY);
-        //engine.font.drawText(ctx, i, clearFlag_x, indexY);
-        engine.font.drawText(ctx, "?", skisel_x, indexY);
+        engine.font.drawText(ctx, info.userName, name_x, indexY);
+        engine.font.drawText(ctx, info.stage, stage_x, indexY);
+
+        bufferCtx.drawImage(skiTile, 100, 140, 10, 10, clearFlag_x, indexY-1, 10, 10);
+        bufferCtx.drawImage(skiTile, (info.skisel*20), 140, 10, 10, skisel_x, indexY-1, 10, 10);
+
+        //engine.font.drawText(ctx, info.skisel, stage_x, indexY);
+        //engine.font.drawText(ctx, "?", skisel_x, indexY);
         engine.font.drawText(ctx, printText.lpad(scoreArr[i].score, 6), score_x, indexY);
       }
     },
