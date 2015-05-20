@@ -3,9 +3,11 @@ define(["jquery", "underscore"],
     'use strict';
 
     var imgData;
+    var self;
 
     function dataParse(){
       //this.dataFileUrl = "//i.imgur.com/LawI0lC.png";
+      self = this;
       this.dataFileUrl = "skiking.dat.png";
       this.config = {
         //이미지 바이너리 뒤에 게임데이터를 붙였기 때문에 이미지만큼의 데이터는 제외시켜야 함.
@@ -23,8 +25,10 @@ define(["jquery", "underscore"],
 
     /* 비동기로 게임 데이터 가져옴
     * 현재는 게임 파일 용량이 크기 때문에 Imgur에 게임 파일 올려두고 거기서 읽어옴    * */
-    dataParse.prototype.loadData = function(url, name){
-      var that = this;
+    dataParse.prototype.loadData = function(paramArr){
+      var that = self;
+      var url = paramArr[0];
+      var name = paramArr[1];
       return new Promise(function(resolve, reject){
         var oReq = new XMLHttpRequest();
         oReq.addEventListener("progress", function(e){
@@ -39,6 +43,10 @@ define(["jquery", "underscore"],
           fetching(that, name, data);
           resolve(that.get);
         };
+
+        oReq.onerror = function(oEvent){
+          reject(Error('error'));
+        }
 
         oReq.send(null);
       });
