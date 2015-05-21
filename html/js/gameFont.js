@@ -107,13 +107,19 @@ define([],function(){
     var resultCode = asciiCode - fontStart;
 
     // 정확함을 위해 1픽셀 보정함
+    var y_quot = (Math.floor(resultCode/fontXcount));
+    var quot = ((resultCode%fontXcount) * fontConf.fontWidth);
+    var h = fontConf.fontHeight;
+
     var fontPos = {
-      x : ((asciiCode%32) * fontConf.fontWidth)-fontConf.fontWidth+1,
-      y : ((Math.floor(resultCode/fontXcount) * fontConf.fontHeight))+1
+      x : quot+1,
+      y : (y_quot * h)+1
     };
 
     return fontPos;
   }
+
+  window.a = getImagePos;
 
   gameFont.prototype.drawText = function(ctx, text, x, y){
     var textArr = parsingText(text);

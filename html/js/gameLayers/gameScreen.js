@@ -92,8 +92,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
 
     inputName: function(keyEvent){
       var keyCode = keyEvent.keyCode;
-
-      if(keyCode === _keyCode.VK_RETURN){
+      if(keyCode === _keyCode.VK_ESCAPE || (keyCode === _keyCode.VK_RETURN && printText.nameBuffer === "")){
         //scoreInput
         //skip save score if when input is null
       }
@@ -104,7 +103,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       }
 
       //정해진 키코드 이외에 입력값 막음
-      if((keyCode >= 32 && keyCode <= 126) || keyCode === _keyCode.VK_BACK_SPACE){
+      if((keyCode >= 32 && keyCode <= 192) || keyCode === _keyCode.VK_BACK_SPACE){
 
         //글자 삭제
         if(keyCode === _keyCode.VK_BACK_SPACE){
@@ -116,12 +115,46 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
         } else {
           //글자 입력
           //대소문자 처리
-          if(keyEvent.shiftKey === false){
-            keyCode = keyCode + 32;
+          var _keyString;
+          var characterMap = [];
+          characterMap[192] = "~";
+          characterMap[49] = "!";
+          characterMap[50] = "@";
+          characterMap[51] = "#";
+          characterMap[52] = "$";
+          characterMap[53] = "%";
+          characterMap[54] = "^";
+          characterMap[55] = "&";
+          characterMap[56] = "*";
+          characterMap[57] = "(";
+          characterMap[48] = ")";
+          characterMap[109] = "_";
+          characterMap[107] = "+";
+          characterMap[219] = "{";
+          characterMap[221] = "}";
+          characterMap[220] = "|";
+          characterMap[59] = ":";
+          characterMap[222] = "\"";
+          characterMap[188] = "<";
+          characterMap[190] = ">";
+          characterMap[191] = "?";
+
+          if(keyEvent.shiftKey === true){
+            if ( keyCode >= 65 && keyCode <= 90 ) {
+              _keyString = String.fromCharCode(keyCode);
+            } else {
+              _keyString = characterMap[keyCode];
+            }
+          } else {
+            if ( keyCode >= 65 && keyCode <= 90 ) {
+              _keyString = String.fromCharCode(keyCode).toLowerCase();
+            } else {
+              _keyString = String.fromCharCode(keyCode);
+            }
           }
 
           if(printText.nameBuffer.length < 3){
-            printText.nameBuffer += String.fromCharCode(keyCode);
+            printText.nameBuffer += _keyString;
           }
         }
       }
@@ -535,26 +568,6 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     player.clear = true;
   }
 
-  function stopRun(){
-    player.run = false;
-  }
-
-
-  function goToNextStage(){
-    nextStageFlag = false;
-    player.stage++;
-
-    playerInit();
-    makeStage();
-    printText.init();
-  }
-
-  function goToTitle(){
-    engine.setVisible(100, true);
-    engine.setVisible(101, false);
-    engine.getLayer(100).init();
-  }
-
   //시드없이 랜덤
   function rand(max){
     return Math.floor(((Math.random() * max)))
@@ -582,6 +595,22 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
           }
       }
     }
+  }
+
+
+  function goToNextStage(){
+    nextStageFlag = false;
+    player.stage++;
+
+    playerInit();
+    makeStage();
+    printText.init();
+  }
+
+  function goToTitle(){
+    engine.setVisible(100, true);
+    engine.setVisible(101, false);
+    engine.getLayer(100).init();
   }
 
 

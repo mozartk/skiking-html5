@@ -11,12 +11,6 @@ define(["bitmap"],function(Bitmap){
   savedImageSize['ski'] = [8,10]
   savedImageSize['skisel'] = [4,1];
 
-  var tileIndex = {
-    'snow' :       [0,1,2,3,4]
-  };
-
-  var tileResource = {};
-
   var _completeFunc;
 
   function gameImage(dataParse, completeFunc){
@@ -52,10 +46,7 @@ define(["bitmap"],function(Bitmap){
     var i, j, k;
 
     var bs = "";
-    var style = "";
-
     var ctx = canvas.getContext('2d');
-
 
     for(j=0; j<48; j++){
       for(i=0; i<40; i++){
@@ -86,17 +77,14 @@ define(["bitmap"],function(Bitmap){
     return canvas;
   }
 
-  function preSprites(imageName, canvas, size){
+  function preSprites(imageName, canvas){
     var imageData = bitmap.get(imageName);
-    var x_lim = size[0];
-    var y_lim = size[1];
     var x = 0;
     var y = 0;
 
     var i, j, k;
 
     var bs = "";
-    var style = "";
     var cut = [10,5,6,10,10,10,10,7];
 
     var ctx = canvas.getContext('2d');

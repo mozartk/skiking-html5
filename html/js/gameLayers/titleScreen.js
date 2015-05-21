@@ -3,7 +3,6 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
   'use strict';
 
   var titleScreen, skiTile, skiselTile;
-  var reDraw = false;
   var soundFx;
   var engine;
   var scoreArr, scoreArrLen;
