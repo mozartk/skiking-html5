@@ -1,6 +1,4 @@
 define([], function(){
-  //seedRandom
-  // https://github.com/davidbau/seedrandom
   /*
   0~50 바닥
     0~10 눈
@@ -23,18 +21,10 @@ define([], function(){
   var timeStamp, tempStamp;
   var rand;
 
-  var stageConfig = {
-    level: []
-  };
   var k = 0;
-  for(var i=0; i<=10; i++){
-    stageConfig.level[i] = 9850-(i*50);
-  }
-
   var self;
 
   function stageMaker(){
-    this.seedrandom = seedrandom;
     self = this;
   }
 
@@ -44,8 +34,8 @@ define([], function(){
     return this;
   }
 
-  stageMaker.prototype.get = function(level){
-    return makeProcess(level);
+  stageMaker.prototype.get = function(levelLen, stage){
+    return makeProcess(levelLen, stage);
   }
 
   //getProbability
@@ -55,20 +45,19 @@ define([], function(){
   }
 
   function getRand(seed){
-    // old version
     var result = Math.abs(('0.'+Math.sin(seed).toString().substr(6)));
-    //var result = rand(seed)();
 
-    return rand(seed)();
+    return result;
   }
 
-  function makeProcess(level){
+  function makeProcess(levelLen, stage){
     var i = 0;
-    var _level = level + 150; //150은 여유분. 스테이지가 끝나도 20칸은 달리기 때문에 여유있게 지정해둠
-
+    var _level = levelLen + 150; //150은 여유분. 스테이지가 끝나도 20칸은 달리기 때문에 여유있게 지정해둠
 
     var field = makeSky();
     var skyLen = (field.length-1);
+
+    var treeDensity = 9750-(stage*20);
 
     //우선 바닥에 눈을 깔아 놓습니다...
     //눈 타일이 10개이므로 10개 랜덤하게 깝니다.
@@ -95,7 +84,7 @@ define([], function(){
           }
         } else {
           var result = self.getProbability(10000);
-          if(result > stageConfig.level[3]){
+          if(result > treeDensity){
             field[k][i] = 20;
           }
         }

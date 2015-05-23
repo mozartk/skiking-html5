@@ -11,6 +11,8 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
   var gameOverFlag = false;
   var engine;
 
+  var stageMaker;
+
 
   var printText = {
     printFlag: false,
@@ -267,11 +269,14 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     scrBuffer.width = engine.screenConf.rw;
     scrBuffer.height = engine.screenConf.rh;
 
+    stageMaker = new StageMaker();
+
     gameInit(obj);
     playerInit(obj);
     makeStage(obj);
 
     printText.init();
+
   }
 
   function stageLength(stageNum){
@@ -280,8 +285,8 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
 
   function makeStage(){
     var stageLen = stageLength(player.stage)
-    var stageMaker = new StageMaker();
-    stage = stageMaker.seed(Date.now()).get(stageLen);
+
+    stage = stageMaker.seed(Date.now()).get(stageLen, player.stage);
     player.distanceLeft = stageLen;
   }
   

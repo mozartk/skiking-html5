@@ -35,7 +35,7 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont", "g
     this.score     = new gameScore(waitDependent.bind(this));
   };
 
-  function waitDependent(engine){
+  function waitDependent(){
     libLoad++;
     if(maxLibLoad <= libLoad){
       run();
@@ -153,8 +153,6 @@ define(["jquery", "underscore", "gameImage", "soundFx", "keyCode","gameFont", "g
 
 
   //painter
-  //frame rate code reference::
-  //http://codetheory.in/controlling-the-frame-rate-with-requestanimationframe/
   asdfJSEngine.prototype.painter = {
       engine: undefined,
       frame: {
