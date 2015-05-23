@@ -3,17 +3,8 @@
 <head>
   <title>SKI KING v1.0</title>
   <style>
-    *{
-      font-family: 'Perfect-DOS-VGA-437';
-      -webkit-font-smoothing: none;
+    h1{
       font-weight: normal;
-    }
-
-    @font-face {
-      font-family: 'Perfect-DOS-VGA-437';
-      src:  url('Perfect-DOS-VGA-437.ttf.woff') format('woff');
-      font-weight: normal;
-      font-style: normal;
     }
 
     canvas {
@@ -29,17 +20,11 @@
 <body>
 <h1>SKI KING</h1>
 <div id="gameDiv" style="border:1px solid blueviolet; height:200px; width:300px;"></div>
-<button type="button" id="startBtn">start</button>
-<input type="text" name="score" id="score">
 
 <script data-main="js/main" src="js/requirejs-plain.js"></script>
 <script>
   require(['skiking'],function(Game){
     new Game();
-
-    document.getElementById("startBtn").addEventListener("click",function(){
-      engine.event.distribute({"type":"keydown"});
-    }, true);
   });
 </script>
 </body>

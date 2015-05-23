@@ -3,7 +3,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
   'use strict';
 
   var soundFx;
-  var stage, stageLen, skiTile;
+  var stage, skiTile;
   
   //game flag
   var gameInputScore = false;
@@ -92,14 +92,17 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
 
     inputName: function(keyEvent){
       var keyCode = keyEvent.keyCode;
-      if(keyCode === _keyCode.VK_ESCAPE || (keyCode === _keyCode.VK_RETURN && printText.nameBuffer === "")){
+      if(keyCode === _keyCode.VK_ESCAPE || (keyCode === _keyCode.VK_RETURN && printText.nameBuffer.trim() === "")){
         //scoreInput
-        //skip save score if when input is null
+        //skip save score if input is null
+        goToTitle();
+        return;
       }
 
       if(keyCode === _keyCode.VK_RETURN || keyCode === _keyCode.VK_ESCAPE){
         engine.score.setScore(printText.nameBuffer, player.stage, player.score, player.skisel, player.distanceTotal);
         goToTitle();
+        return;
       }
 
       //정해진 키코드 이외에 입력값 막음

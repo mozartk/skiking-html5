@@ -69,7 +69,6 @@ define(["rawPCM"],
       var index = Object.keys(self.soundObj).length;
       var audioName = self.cutPoint[index][0];
       self.soundObj[audioName] = buffer;
-      console.log(fileName);
 
       if(index >= self.soundCnt-1){
         self.soundLoadComplete = true;

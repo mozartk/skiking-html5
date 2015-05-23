@@ -1,4 +1,4 @@
-define(['seedRandom'], function(seedrandom){
+define([], function(){
   //seedRandom
   // https://github.com/davidbau/seedrandom
   /*
