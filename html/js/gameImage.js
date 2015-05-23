@@ -14,7 +14,7 @@ define(["bitmap"],function(Bitmap){
   var _completeFunc;
 
   function gameImage(dataParse, completeFunc){
-    window.bitmap = bitmap = new Bitmap(dataParse);
+    bitmap = new Bitmap(dataParse);
     _completeFunc = completeFunc;
     init();
   }

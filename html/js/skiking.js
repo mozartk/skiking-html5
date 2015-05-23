@@ -19,7 +19,7 @@ define(["jquery", "underscore", "dataParse"],
 
     function runGame(){
       require(["asdfJSEngine"], function(asdfJSEngine){
-        engine = window.engine = new asdfJSEngine(dataParse);
+        engine = new asdfJSEngine(dataParse);
       });
     }
 
