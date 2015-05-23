@@ -140,7 +140,7 @@ define([],
 
 
     //getWav
-    rawpcm.prototype.getWav = function(data, startIdx, size){
+    rawpcm.prototype.getWav = function(data, startIdx, endIdx){
       var dataWav;
 
       if(data instanceof ArrayBuffer === true) {
@@ -150,7 +150,7 @@ define([],
       }
 
       if(typeof startIdx === "number"){
-        dataWav = this.subarray(dataWav, startIdx, size);
+        dataWav = this.subarray(dataWav, startIdx, endIdx);
       }
 
       var header = this.makeHeader(dataWav);

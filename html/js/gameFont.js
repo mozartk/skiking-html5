@@ -52,8 +52,9 @@ define([],function(){
       //색 반전시킴
       var imageData = fontImgCtx.getImageData(0, 0, fontConf.imageWidth, fontConf.imageHeight);
       var data = imageData.data;
+      var len = data.length;
 
-      for(var i = 0; i < data.length; i += 4) {
+      for(var i = 0; i < len; i += 4) {
         // red
         data[i] = 255 - data[i];
         // green
@@ -119,16 +120,19 @@ define([],function(){
     return fontPos;
   }
 
-  window.a = getImagePos;
-
   gameFont.prototype.drawText = function(ctx, text, x, y){
     var textArr = parsingText(text);
 
     fontBufCtx.clearRect(0,0,screenConf.w, screenConf.h);
     var len = textArr.length;
     for(var i=0; i<len; i++){
-      fontBufCtx.drawImage(fontImage, textArr[i].x, textArr[i].y, 8, 8,
-      x+(i*fontConf.fontWidth), y, 8, 8);
+      if(textArr[i].x === -7 || textArr[i].y === -7){
+        //space char
+        continue;
+      } else {
+        fontBufCtx.drawImage(fontImage, textArr[i].x, textArr[i].y, 8, 8,
+        x+(i*fontConf.fontWidth), y, 8, 8);
+      }
     }
 
     ctx.drawImage(fontBuffer, 0, 0, screenConf.rw, screenConf.rh);

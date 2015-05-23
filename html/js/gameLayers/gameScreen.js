@@ -349,7 +349,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       v.forEach(function(vv, kk){
         if(vv == 20){
           //tree 나무는 세로로 10px더 길기 때문에 보정해줘야 함
-          bufferCtx.drawImage(skiTile, -5, 20, 20, 20, (kk*10)-10, (k*10)-10, 20, 20);
+          bufferCtx.drawImage(skiTile, 0, 20, 15, 20, (kk*10)-5, (k*10)-10, 15, 20);
         } else if(vv == 30){
           bufferCtx.drawImage(skiTile, 185, 10, 10, 10, kk*10, k*10, 10, 10);
         } else if(vv == 32){
@@ -439,15 +439,10 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     return stage[player.currentPosY+14+(num)];
   }
 
-  window.getCur = function(num){
-    return currentfloorInfo(num);
-  }
-
   function paintPlayer(){
     var p = playerPosInfo();
     bufferCtx.drawImage(skiTile, p.x, p.y, p.w, p.h, p.cx-(p.rw/2)+2, p.cy, p.rw, p.rh);
   }
-
 
   //방향을 고려한 현재 포지션
   function curDirPos(){

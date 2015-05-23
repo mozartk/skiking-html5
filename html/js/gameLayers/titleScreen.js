@@ -7,6 +7,7 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
   var engine;
   var scoreArr, scoreArrLen;
   var userSkisel = 1;
+  var titleVoiceFlag = false;
 
   var scrBuffer = document.createElement('canvas');
 
@@ -27,6 +28,7 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
   };
 
   titleScreenLayer.prototype.init = function(){
+    titleVoiceFlag = false;
     scoreArr = engine.score.getScore();
     scoreArrLen = scoreArr.length;
 
@@ -34,8 +36,6 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
     scrBuffer.height = engine.screenConf.rh;
 
     userSkisel = 1;
-
-    soundFx.play("titleskiking");
   }
 
   function drawTitleScreen(){
@@ -138,10 +138,6 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
           selectSkiSel('right');
           break;
 
-        case keyCode.VK_UP:
-        case keyCode.VK_DOWN:
-          break;
-
         case keyCode.VK_SPACE:
         case keyCode.VK_RETURN:
           goToGame();
@@ -157,6 +153,10 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
     drawGameScore();
 
     ctx.drawImage(scrBuffer, 0, 0);
+    if(titleVoiceFlag === false){
+      soundFx.play("titleskiking");
+      titleVoiceFlag = true;
+    }
   }
 
   return titleScreenLayer;
