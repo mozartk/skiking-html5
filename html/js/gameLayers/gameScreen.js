@@ -13,7 +13,6 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
 
   var stageMaker;
 
-
   var printText = {
     printFlag: false,
     printTime1 : 0,
