@@ -6,16 +6,18 @@ define(["jquery", "underscore"],
     var self;
 
     function dataParse(){
-      //this.dataFileUrl = "//i.imgur.com/LawI0lC.png";
       self = this;
-      this.dataFileUrl = "skiking.dat.png";
+      //this.dataFileUrl = "//i.imgur.com/LawI0lC.png";
+      //this.dataFileUrl = "skiking.dat.png";
+      this.dataFileUrl = "skiking.dat";
       this.config = {
         //이미지 바이너리 뒤에 게임데이터를 붙였기 때문에 이미지만큼의 데이터는 제외시켜야 함.
-        imgDataLen : 136,
+        //imgDataLen : 136,
+        imgDataLen : 0,
 
         //url, Name
         dataFileList:[
-          ['skiking.dat.png', 'SKIKING.DAT'],
+          [this.dataFileUrl, 'SKIKING.DAT'],
           ['CGALow.png','CGALOW.PNG']
         ]
       };

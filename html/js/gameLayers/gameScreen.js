@@ -533,7 +533,10 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
 
     //게임 진행 시 처음에 항상 특정 코멘트가 나오는걸 구현
     if (player.distance === 1) {
-      soundFx.play("youwillgo");
+      var chance = rand(3);
+      if(chance >= 1){
+        soundFx.play("youwillgo");
+      }
     }
 
     //살아있으면 기록 +1점
