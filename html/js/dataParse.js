@@ -55,7 +55,13 @@ define(["jquery", "underscore"],
     };
 
     function loadState(e){
-      $("#gameDiv").text(e.loaded + "/" + e.total);
+      var loadStr;
+      if(e.loaded === e.total){
+        loadStr  = "";
+      } else {
+        loadStr = e.loaded + "/" + e.total;
+      }
+      $("#gameDiv").text(loadStr);
     }
 
     //파일에 있는 주소를 알려줌
