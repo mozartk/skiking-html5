@@ -1,14 +1,16 @@
-#SKIKING HTML5 PORT
-
+#SKIKING HTML5 PORT#
 old DOS game SKIKING web port.
 
-Using libraries:
+######Using libraries######
 * [JQuery]
 * [Underscore]
 * [RequireJS]
 
+####Improvements or Bug reports####
+Please send e-mail <mozartk30@gmail.com>.
 
-### LICENSE
+
+### LICENSE ###
 MIT
 
 [jQuery]:http://jquery.com
