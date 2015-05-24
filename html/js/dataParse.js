@@ -34,7 +34,7 @@ define(["jquery", "underscore"],
       return new Promise(function(resolve, reject){
         var oReq = new XMLHttpRequest();
         oReq.addEventListener("progress", function(e){
-          console.log(e.loaded);
+          loadState(e);
         });
         oReq.open("GET", url, true);
         oReq.responseType = "arraybuffer";
@@ -53,6 +53,10 @@ define(["jquery", "underscore"],
         oReq.send(null);
       });
     };
+
+    function loadState(e){
+      $("#gameDiv").text(e.loaded + "/" + e.total);
+    }
 
     //파일에 있는 주소를 알려줌
     function findAddr(idx, skiData){
