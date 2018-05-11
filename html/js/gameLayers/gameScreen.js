@@ -623,6 +623,29 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
   //true를 리턴하면 키를 여기서 먹도록 처리
   //false를 리턴하면 여기서 키 이벤트를 다시 상위로 보냄, 이 경우에는 다른 레이어로 키 이벤트를 다시 보내도록 처리해야 함
   gameScreenLayer.prototype.event = function(e){
+      //임시로 모바일 키입력 대응
+      if(e.type == 'touchstart'){
+        var part = Math.floor(this.engine.screenConf.w/3);
+        var pos = Math.floor(e.originalEvent.touches[0].clientX/part);
+        e.type = 'keydown';
+        switch(pos){
+          case 0:
+            e.which = keyCode.VK_LEFT;
+            break;
+          case 1:
+            if(gameInputScore) {
+              e.which = keyCode.VK_RETURN;
+            } else {
+              e.which = keyCode.VK_DOWN;
+            }
+            break;
+          case 2:
+            e.which = keyCode.VK_RIGHT;
+            break;
+        }
+        e.keyCode = e.which;
+      }
+
     if(e.type == 'keydown') {
 
       //점수 입력
@@ -642,7 +665,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
       }
 
       //게임 클리어 / 게임 오버 시 방향키는 먹히지 말아야 함.
-      switch (e.keyCode) {
+      switch (e.which) {
         case keyCode.VK_DOWN:
         case keyCode.VK_LEFT:
         case keyCode.VK_RIGHT:
@@ -652,8 +675,8 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
           break;
       }
 
-      setDirection(e.keyCode);
-      switch (e.keyCode) {
+      setDirection(e.which);
+      switch (e.which) {
         case keyCode.VK_ESCAPE:
           goToTitle();
           break;
