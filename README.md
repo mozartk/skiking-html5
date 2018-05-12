@@ -6,7 +6,7 @@
 Old DOS game SKIKING web port.
 
 ## demo
-<https://mozartk.github.io/skiking-html5/>
+<https://mozartk.github.io/skiking-html5/html/>
 
 
 ### Using libraries
