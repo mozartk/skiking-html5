@@ -210,7 +210,7 @@ define(["underscore", "stageMaker", "keyCode"],  function(_, StageMaker, _keyCod
       printText.statusPrint(ctx);
       printText.resultPrint(ctx);
     }
-  }
+  };
 
   var player = {
     run: false,
@@ -236,7 +236,7 @@ define(["underscore", "stageMaker", "keyCode"],  function(_, StageMaker, _keyCod
     x_max : 31,
     y_min : 0,
     y_max : 23
-  }
+  };
 
 
   var scrBuffer = document.createElement("canvas");
@@ -288,17 +288,17 @@ define(["underscore", "stageMaker", "keyCode"],  function(_, StageMaker, _keyCod
     stage = stageMaker.seed(Date.now()).get(stageLen, player.stage);
     player.distanceLeft = stageLen;
   }
-  
+
   function gameInit(obj){
     gameInputScore = false;
     gameOverFlag = false;
 
     //basic player settings;
-    player['stage'] = 1;
-    player['freeGuys'] = 0;
-    player['alive'] = true;
-    player['distanceTotal'] = 0;
-    player['distanceLeft'] = 0;
+    player["stage"] = 1;
+    player["freeGuys"] = 0;
+    player["alive"] = true;
+    player["distanceTotal"] = 0;
+    player["distanceLeft"] = 0;
     player["score"] = 0;
     player["skisel"] = obj.skisel || 1;
   }
@@ -306,16 +306,16 @@ define(["underscore", "stageMaker", "keyCode"],  function(_, StageMaker, _keyCod
   function playerInit(){
     nextStageFlag = false;
 
-    player['triggerStop'] = 20;
-    player['run'] = false;
-    player['skiselDirection'] = 1; //0left 1mid 2right
-    player['lastDirection'] = 1; //0left 1mid 2right
-    player['speedState'] = 0;//0~31
-    player['currentPosX'] = 16;//scroll pos
-    player['currentPosY'] = 0;//0~1
-    player['distance'] = 0;//0~1
-    player['alive'] = true; //0alive 1dead
-    player['clear'] = false;
+    player["triggerStop"] = 20;
+    player["run"] = false;
+    player["skiselDirection"] = 1; //0left 1mid 2right
+    player["lastDirection"] = 1; //0left 1mid 2right
+    player["speedState"] = 0;//0~31
+    player["currentPosX"] = 16;//scroll pos
+    player["currentPosY"] = 0;//0~1
+    player["distance"] = 0;//0~1
+    player["alive"] = true; //0alive 1dead
+    player["clear"] = false;
   }
 
   function scoreCanInput(){
@@ -624,10 +624,10 @@ define(["underscore", "stageMaker", "keyCode"],  function(_, StageMaker, _keyCod
   //false를 리턴하면 여기서 키 이벤트를 다시 상위로 보냄, 이 경우에는 다른 레이어로 키 이벤트를 다시 보내도록 처리해야 함
   gameScreenLayer.prototype.event = function(e){
       //임시로 모바일 키입력 대응
-      if(e.type == 'touchstart'){
+      if(e.type == "touchstart"){
         var part = Math.floor(this.engine.screenConf.w/3);
         var pos = Math.floor(e.originalEvent.touches[0].clientX/part);
-        e.type = 'keydown';
+        e.type = "keydown";
         switch(pos){
           case 0:
             e.which = keyCode.VK_LEFT;
@@ -646,7 +646,7 @@ define(["underscore", "stageMaker", "keyCode"],  function(_, StageMaker, _keyCod
         e.keyCode = e.which;
       }
 
-    if(e.type == 'keydown') {
+    if(e.type == "keydown") {
 
       //점수 입력
       if(gameInputScore){

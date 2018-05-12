@@ -129,10 +129,10 @@ define(["underscore", "keyCode"],  function(_, keyCode){
   //false를 리턴하면 여기서 키 이벤트를 다시 상위로 보냄, 이 경우에는 다른 레이어로 키 이벤트를 다시 보내도록 처리해야 함
   titleScreenLayer.prototype.event = function(e){
     //임시로 모바일 키입력 대응
-    if(e.type == 'touchstart'){
+    if(e.type == "touchstart"){
       var part = Math.floor(this.engine.screenConf.w/3);
       var pos = Math.floor(e.originalEvent.touches[0].clientX/part);
-      e.type = 'keydown';
+      e.type = "keydown";
       switch(pos){
         case 0:
           e.which = keyCode.VK_LEFT;
@@ -146,7 +146,7 @@ define(["underscore", "keyCode"],  function(_, keyCode){
       }
     }
 
-    if(e.type === 'keydown'){
+    if(e.type === "keydown"){
       switch(e.which){
         case keyCode.VK_LEFT:
           selectSkiSel('left');
