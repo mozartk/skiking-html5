@@ -1,12 +1,13 @@
-define(["jquery", "underscore"],
-  function($, _){
-    'use strict';
+define(["underscore"],
+  function(_){
+    "use strict";
 
     var imgData;
     var self;
 
     function dataParse(){
       self = this;
+      //이머저에 업로드되는 그림에 바이너리 데이터를 붙여서 보내면 cdn으로 사용가능-_-;;
       //this.dataFileUrl = "//i.imgur.com/LawI0lC.png";
       //this.dataFileUrl = "skiking.dat.png";
       this.dataFileUrl = "skiking.dat";
@@ -17,13 +18,13 @@ define(["jquery", "underscore"],
 
         //url, Name
         dataFileList:[
-          [this.dataFileUrl, 'SKIKING.DAT'],
-          ['CGALow.png','CGALOW.PNG']
+          [this.dataFileUrl, "SKIKING.DAT"],
+          ["CGALow.png","CGALOW.PNG"]
         ]
       };
 
       this.gameData = {};
-    };
+    }
 
     /* 비동기로 게임 데이터 가져옴
     * 현재는 게임 파일 용량이 크기 때문에 Imgur에 게임 파일 올려두고 거기서 읽어옴    * */
@@ -47,8 +48,8 @@ define(["jquery", "underscore"],
         };
 
         oReq.onerror = function(oEvent){
-          reject(Error('error'));
-        }
+          reject(Error("error"));
+        };
 
         oReq.send(null);
       });
@@ -61,7 +62,7 @@ define(["jquery", "underscore"],
       } else {
         loadStr = e.loaded + "/" + e.total;
       }
-      $("#gameDiv").text(loadStr);
+      document.querySelector("#gameDiv").textContent = loadStr;
     }
 
     //파일에 있는 주소를 알려줌
@@ -75,7 +76,7 @@ define(["jquery", "underscore"],
 
     //Object에 게임 데이터를 할당해둠
     function fetching(that, name, data){
-      if(name === 'SKIKING.DAT') {
+      if(name === "SKIKING.DAT") {
         var skiData = that.gameData[name] = data.subarray(that.config.imgDataLen);
 
         for (var i = 20; i <= 180; i = i + 20) {
