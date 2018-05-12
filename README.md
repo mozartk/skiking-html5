@@ -9,8 +9,7 @@ Old DOS game SKIKING web port.
 <https://mozartk.github.io/skiking-html5/>
 
 
-### Using libraries 
-* [JQuery]
+### Using libraries
 * [Underscore]
 * [RequireJS]
 
@@ -23,6 +22,5 @@ Made by mozartk.
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
 
-[jQuery]:http://jquery.com
 [Underscore]:http://underscorejs.org
 [RequireJS]:http://www.requirejs.org
