@@ -1,6 +1,6 @@
 //v0.0.1
-define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageMaker, _keyCode){
-  'use strict';
+define(["underscore", "stageMaker", "keyCode"],  function(_, StageMaker, _keyCode){
+  "use strict";
 
   var soundFx;
   var stage, skiTile;
@@ -239,9 +239,9 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
   }
 
 
-  var scrBuffer = document.createElement('canvas');
+  var scrBuffer = document.createElement("canvas");
 
-  var bufferCtx  = scrBuffer.getContext('2d');
+  var bufferCtx  = scrBuffer.getContext("2d");
   bufferCtx.imageSmoothingEnabled = false;
 
   var keyCode;
@@ -253,7 +253,7 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     this.player = player;
     keyCode = engine.keyCode;
     soundFx = engine.soundFx;
-    skiTile  = engine.gameImage.getImage('ski');
+    skiTile  = engine.gameImage.getImage("ski");
 
     if(layerOption.enable === true){
       this.init();
@@ -299,8 +299,8 @@ define(["jquery", "underscore", "stageMaker", "keyCode"],  function($, _, StageM
     player['alive'] = true;
     player['distanceTotal'] = 0;
     player['distanceLeft'] = 0;
-    player['score'] = 0;
-    player['skisel'] = obj.skisel || 1;
+    player["score"] = 0;
+    player["skisel"] = obj.skisel || 1;
   }
 
   function playerInit(){

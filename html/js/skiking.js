@@ -1,6 +1,6 @@
-define(["jquery", "underscore", "dataParse"],
-  function($, _, dataParse){
-    'use strict';
+define(["underscore", "dataParse"],
+  function(_, dataParse){
+    "use strict";
 
     var engine;
 

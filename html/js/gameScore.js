@@ -1,9 +1,9 @@
-define(['underscore'],function(_){
-  'use strict'
+define(["underscore"],function(_){
+  "use strict"
 
   var self;
   var scoreCount = 10;
-  var scoreName = 'skikingScore';
+  var scoreName = "skikingScore";
 
   function gameScore(completeFunc){
     self = this;
@@ -19,9 +19,9 @@ define(['underscore'],function(_){
   gameScore.prototype.isHiscore = function(score){
     //1위부터 10위까지의 숫자 중에서 기록에 해당하는 순위 리턴
     var scoreArr = getScoreObj();
-    var result = _.sortedIndex(scoreArr, {'score':score}, function(v,k){
+    var result = _.sortedIndex(scoreArr, {"score":score}, function(v,k){
       return v.score * -1;
-    }, 'score');
+    }, "score");
 
     if(result < 10){
       return true;
@@ -34,9 +34,9 @@ define(['underscore'],function(_){
     //점수 입력
     var scoreArr = getScoreObj();
 
-    var result = _.sortedIndex(scoreArr, {'score':score}, function(v,k){
+    var result = _.sortedIndex(scoreArr, {"score":score}, function(v,k){
       return v.score * -1;
-    }, 'score');
+    }, "score");
 
     scoreArr.splice(result,0, {
       skisel: skisel,

@@ -1,6 +1,6 @@
 define(["rawPCM"],
   function(rawPCM){
-    'use strict';
+    "use strict";
 
     var dSelf; //global
     var _completeFunc;
@@ -17,24 +17,24 @@ define(["rawPCM"],
       this.soundLength = sound.length;
       _completeFunc = completeFunc;
       this.cutPoint = [
-        ['clap', 0, 61450],
-        ['oops', 61451, 64986],
-        ['oh', 64987, 68561],
-        ['ooch', 68562, 72723],
-        ['wow', 72724, 78750],
-        ['lookatmego', 78751, 88427],
-        ['imlockinghouse', 88428, 101989],
-        ['hitthatbaby', 101990, 113068],
-        ['ohyeahlookatmego', 113069, 125690],
-        ['titleskiking', 125691, 138349],
-        ['whee', 138350, 141084],
-        ['whoo', 141085, 143361],
-        ['ohhoo', 143362, 146393],
-        ['ahoh', 146394, 150454],
-        ['50hills', 150455, 186300],
-        ['sureis', 186301, 201005],
-        ['youwillgo', 201006, 214063],
-        ['freeguy', 214064,this.soundLength]
+        ["clap", 0, 61450],
+        ["oops", 61451, 64986],
+        ["oh", 64987, 68561],
+        ["ooch", 68562, 72723],
+        ["wow", 72724, 78750],
+        ["lookatmego", 78751, 88427],
+        ["imlockinghouse", 88428, 101989],
+        ["hitthatbaby", 101990, 113068],
+        ["ohyeahlookatmego", 113069, 125690],
+        ["titleskiking", 125691, 138349],
+        ["whee", 138350, 141084],
+        ["whoo", 141085, 143361],
+        ["ohhoo", 143362, 146393],
+        ["ahoh", 146394, 150454],
+        ["50hills", 150455, 186300],
+        ["sureis", 186301, 201005],
+        ["youwillgo", 201006, 214063],
+        ["freeguy", 214064,this.soundLength]
       ];
       this.soundObj = {};
 

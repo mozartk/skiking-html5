@@ -1,6 +1,6 @@
 //v0.0.1
-define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
-  'use strict';
+define(["underscore", "keyCode"],  function(_, keyCode){
+  "use strict";
 
   var titleScreen, skiTile, skiselTile;
   var soundFx;
@@ -9,9 +9,9 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
   var userSkisel = 1;
   var titleVoiceFlag = false;
 
-  var scrBuffer = document.createElement('canvas');
+  var scrBuffer = document.createElement("canvas");
 
-  var bufferCtx  = scrBuffer.getContext('2d');
+  var bufferCtx  = scrBuffer.getContext("2d");
   bufferCtx.imageSmoothingEnabled = false;
 
   function titleScreenLayer(layerOption, _engine){
@@ -20,9 +20,9 @@ define(["jquery", "underscore", "keyCode"],  function($, _, keyCode){
     this.engine.setLayer(this);
     soundFx = engine.soundFx;
 
-    titleScreen  = engine.gameImage.getImage('skititl');
-    skiTile  = engine.gameImage.getImage('ski');
-    skiselTile  = engine.gameImage.getImage('skisel');
+    titleScreen  = engine.gameImage.getImage("skititl");
+    skiTile  = engine.gameImage.getImage("ski");
+    skiselTile  = engine.gameImage.getImage("skisel");
 
     this.init();
   };

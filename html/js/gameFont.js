@@ -7,18 +7,18 @@ define([],function(){
     imageHeight: 52,
     fontWidth:8,
     fontHeight: 8
-  }
+  };
 
-  var fontBuffer = document.createElement('canvas');
+  var fontBuffer = document.createElement("canvas");
   fontBuffer.imageSmoothingEnabled = false;
-  var fontBufCtx  = fontBuffer.getContext('2d');
+  var fontBufCtx  = fontBuffer.getContext("2d");
 
 
-  var fontImage = document.createElement('canvas');
+  var fontImage = document.createElement("canvas");
   fontImage.width = fontConf.imageWidth;
   fontImage.height = fontConf.imageHeight;
   fontImage.imageSmoothingEnabled = false;
-  var fontImgCtx = fontImage.getContext('2d');
+  var fontImgCtx = fontImage.getContext("2d");
 
   var _completeFunc;
   var fontData;
@@ -42,7 +42,7 @@ define([],function(){
   }
 
   function loadFontImage(){
-    var blob = new Blob([fontData], {'type': 'image/png'});
+    var blob = new Blob([fontData], {"type": "image/png"});
     var img = new Image();
 
     img.onload = function(){
@@ -54,7 +54,8 @@ define([],function(){
       var data = imageData.data;
       var len = data.length;
 
-      for(var i = 0; i < len; i += 4) {
+      var i = 0;
+      for(; i < len; i += 4) {
         // red
         data[i] = 255 - data[i];
         // green
@@ -83,7 +84,7 @@ define([],function(){
     }
 
     if(typeof text !== "string") {
-      console.error('not text');
+      console.error("not text");
       return false;
     }
 

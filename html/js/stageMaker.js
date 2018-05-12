@@ -45,7 +45,7 @@ define([], function(){
   }
 
   function getRand(seed){
-    var result = Math.abs(('0.'+Math.sin(seed).toString().substr(6)));
+    var result = Math.abs(("0."+Math.sin(seed).toString().substr(6)));
 
     return result;
   }
@@ -62,7 +62,7 @@ define([], function(){
     //우선 바닥에 눈을 깔아 놓습니다...
     //눈 타일이 10개이므로 10개 랜덤하게 깝니다.
     for(k=skyLen; k<=_level; k++){
-      var arr = new Array();
+      var arr = [];
       for(i=0; i<=31; i++){
         var result = self.getProbability(5);
         arr.push(result);
@@ -100,7 +100,7 @@ define([], function(){
   function makeSky(){
     var sky = [];
     for(k=0; k<23; k++){
-      var arr = new Array();
+      var arr = [];
       for(i=0; i<=31; i++){
         if(k < 7){
           arr.push(30);
@@ -128,7 +128,7 @@ define([], function(){
     var endline = field.length-100-22-15;
     var i = 0;
 
-    var lineBuffer = document.createElement('canvas');
+    var lineBuffer = document.createElement("canvas");
     lineBuffer.width = 10;
     lineBuffer.height = 20;
 

@@ -1,5 +1,5 @@
 define(["underscore"],function(_){
-  'use strict';
+  "use strict";
 
   var dataParse;
   var imgData = {}
@@ -39,7 +39,9 @@ define(["underscore"],function(_){
   //10진수->16진수
   function hxd(int){
     var hex = int.toString(16);
-    if(hex.length == 1) hex = "0"+hex;
+    if(hex.length === 1) {
+      hex = "0"+hex;
+    }
     return hex;
   }
 
@@ -50,10 +52,10 @@ define(["underscore"],function(_){
     var imageTotal = [];
     var byte = skipByte;
 
-    var imageArr = new Array();
+    var imageArr = [];
     for(j=0; j<48; j++){
       for(i=0; i<40; i++){
-        imageArr[i] = new Array();
+        imageArr[i] = [];
         for(k=0; k<40; k++) {
           imageArr[i][k] = palData[image[byte++]];
         }
@@ -62,7 +64,7 @@ define(["underscore"],function(_){
       imageTotal.push(arr);
 
       imageArr = null;
-      imageArr = new Array();
+      imageArr = [];
     }
 
     return imageTotal;
@@ -76,11 +78,11 @@ define(["underscore"],function(_){
     var imageTotal = [];
     var byte = skipByte;
 
-    var imageArr = new Array();
+    var imageArr = [];
     for(j=0; j<68; j++){
       for(i=0; i<20; i++){
-        imageArr[i] = new Array();
-        imageArr[i+1] = new Array();
+        imageArr[i] = [];
+        imageArr[i+1] = [];
         for(k=0; k<20; k++) {
           imageArr[i][k] = palData[image[byte++]];
           imageArr[i+1][k+1] = palData[image[byte+20]];
@@ -89,7 +91,7 @@ define(["underscore"],function(_){
       var arr = _.clone(imageArr);
       imageTotal.push(arr);
 
-      imageArr = new Array();
+      imageArr = [];
     }
 
     //게임 스프라이트 효율적으로 가져오기 위해서 파싱된 이미지 재배치

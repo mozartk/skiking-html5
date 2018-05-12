@@ -2,14 +2,14 @@ define(["bitmap"],function(Bitmap){
   var bitmap;
 
   var savedImage = {};
-  savedImage['skititl'] = null;
-  savedImage['ski'] = null;
-  savedImage['skisel'] = null;
+  savedImage.skititl = null;
+  savedImage.ski = null;
+  savedImage.skisel = null;
 
   var savedImageSize = {};
-  savedImageSize['skititl'] = [8,6];
-  savedImageSize['ski'] = [8,10]
-  savedImageSize['skisel'] = [4,1];
+  savedImageSize.skititl = [8,6];
+  savedImageSize.ski = [8,10]
+  savedImageSize.skisel = [4,1];
 
   var _completeFunc;
 
@@ -21,7 +21,7 @@ define(["bitmap"],function(Bitmap){
 
   function init(){
     for(var i in savedImage){
-      var _canvasBuf = document.createElement('canvas');
+      var _canvasBuf = document.createElement("canvas");
       _canvasBuf.width = savedImageSize[i][0] * 40;
       _canvasBuf.height = savedImageSize[i][1] * 40;
 
@@ -46,7 +46,7 @@ define(["bitmap"],function(Bitmap){
     var i, j, k;
 
     var bs = "";
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext("2d");
 
     for(j=0; j<48; j++){
       for(i=0; i<40; i++){
@@ -87,7 +87,7 @@ define(["bitmap"],function(Bitmap){
     var bs = "";
     var cut = [10,5,6,10,10,10,10,7];
 
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext("2d");
 
 
     for(j=0; j<68; j++){
